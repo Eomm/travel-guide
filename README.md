@@ -33,3 +33,11 @@ The Vite plugin `scripts/vite-plugin-trips.ts` publishes the trips as static dat
 `npm run dev` serves the same URLs from memory and reloads on changes in `trips/`: an invalid trip is left out
 and its errors are shown in the terminal and in the browser overlay. The app reads the data at runtime through
 `src/data/trips.ts` (`loadTripIndex`, `loadTrip`), never from the JS bundle.
+
+## Deploy
+
+`.github/workflows/deploy.yml` deploys to GitHub Pages on every push to `main`; pull requests run the same
+checks (lint, generated files up to date, type check, trip checks, build) without deploying. The site is served
+under `/<repo name>/`, and `404.html` is a copy of `index.html` so deep links like `/<repo>/<slug>` work on reload.
+
+One-time setup: repository Settings → Pages → Source: **GitHub Actions**.
