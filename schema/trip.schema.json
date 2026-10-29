@@ -335,13 +335,6 @@
           "minimum": 0,
           "maximum": 5
         },
-        "veg": {
-          "description": "Vegetarian-friendly.",
-          "type": "boolean"
-        },
-        "glutenFree": {
-          "type": "boolean"
-        },
         "tags": {
           "type": "array",
           "items": {

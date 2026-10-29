@@ -3,7 +3,7 @@
 "use strict";
 export const validate = validate20;
 export default validate20;
-const schema31 = {"$schema":"https://json-schema.org/draft/2020-12/schema","$id":"https://travel-guide.local/schema/trip.schema.json","title":"Travel Guide trip","description":"One trip. Stored as trips/<slug>/trip.json or trip.json5; the folder name is the trip URL slug. All prices are in trip.currency. All local dates/times are in trip.timezone.","type":"object","required":["schemaVersion","trip","places","days"],"properties":{"$schema":{"type":"string"},"schemaVersion":{"const":1},"trip":{"$ref":"#/$defs/tripSettings"},"places":{"description":"Places catalog. Places not referenced by any stop are shown as the wishlist.","type":"array","items":{"$ref":"#/$defs/place"}},"days":{"type":"array","items":{"$ref":"#/$defs/day"}},"logistics":{"$ref":"#/$defs/logistics"}},"patternProperties":{"^x-":{}},"additionalProperties":false,"$defs":{"id":{"title":"Id","description":"Identifier, unique within its collection (places, stops, each logistics list).","type":"string","pattern":"^[A-Za-z0-9][A-Za-z0-9_-]*$"},"date":{"title":"LocalDate","description":"Local date, YYYY-MM-DD.","type":"string","pattern":"^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$"},"time":{"title":"LocalTime","description":"Local time, HH:MM (24h).","type":"string","pattern":"^([01]\\d|2[0-3]):[0-5]\\d$"},"localDateTime":{"title":"LocalDateTime","description":"Local date-time without offset, YYYY-MM-DDTHH:MM. Interpreted in trip.timezone unless a timezone is given next to it.","type":"string","pattern":"^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])T([01]\\d|2[0-3]):[0-5]\\d$"},"timezone":{"title":"Timezone","description":"IANA timezone name, e.g. Asia/Tokyo.","type":"string","pattern":"^[A-Za-z_]+(/[A-Za-z0-9_+-]+)*$"},"language":{"title":"Language","description":"BCP 47 language tag, e.g. it, en, ja, en-GB.","type":"string","pattern":"^[a-z]{2,3}(-[A-Z]{2})?$"},"currency":{"title":"Currency","description":"ISO 4217 code, e.g. JPY, EUR.","type":"string","pattern":"^[A-Z]{3}$"},"price":{"title":"Price","description":"Amount in trip.currency.","type":"number","minimum":0},"durationMin":{"title":"DurationMin","description":"Duration in minutes.","type":"integer","minimum":0},"resource":{"title":"Resource","description":"Absolute http(s) URL or a path relative to the trip folder (e.g. audio/museum.mp3).","type":"string","minLength":1},"url":{"title":"Url","type":"string","pattern":"^https?://"},"text":{"title":"MarkdownText","description":"Free text. Markdown is allowed.","type":"string"},"geo":{"title":"Geo","type":"object","properties":{"lat":{"type":"number","minimum":-90,"maximum":90},"lng":{"type":"number","minimum":-180,"maximum":180}},"dependentRequired":{"lat":["lng"],"lng":["lat"]}},"tripSettings":{"title":"TripSettings","type":"object","required":["title","startDate","endDate","timezone","currency","language"],"properties":{"title":{"type":"string","minLength":1},"subtitle":{"type":"string"},"description":{"$ref":"#/$defs/text"},"startDate":{"$ref":"#/$defs/date"},"endDate":{"$ref":"#/$defs/date"},"timezone":{"$ref":"#/$defs/timezone"},"currency":{"description":"Currency of every price in this file.","$ref":"#/$defs/currency"},"convertCurrency":{"description":"Rough fixed conversion shown next to prices, e.g. 1700 ¥ (≈ 10 €). Not live exchange rates.","type":"object","required":["currency","oneEquals"],"properties":{"currency":{"$ref":"#/$defs/currency"},"oneEquals":{"description":"How many units of trip.currency make 1 unit of this currency. With trip.currency JPY and currency EUR: 170 means 1 € = 170 ¥.","type":"number","exclusiveMinimum":0}},"additionalProperties":false},"language":{"description":"Language of the trip content. Also the default UI language when it is it or en.","$ref":"#/$defs/language"},"cover":{"$ref":"#/$defs/resource"}},"patternProperties":{"^x-":{}},"additionalProperties":false},"openingHours":{"title":"OpeningHours","type":"object","properties":{"text":{"description":"Human-readable hours, shown as is.","type":"string"},"weekly":{"description":"Machine-readable hours used for 'closed at that time' warnings. Missing day = closed. Ranges are HH:MM-HH:MM; an end past midnight may use 24:00-29:59.","type":"object","propertyNames":{"enum":["mon","tue","wed","thu","fri","sat","sun"]},"additionalProperties":{"type":"array","items":{"type":"string","pattern":"^([01]\\d|2[0-3]):[0-5]\\d-([01]\\d|2[0-9]):[0-5]\\d$"}}},"closures":{"description":"Human-readable closing days / holidays, e.g. 'Closed on Mondays, or Tuesday if Monday is a holiday'.","type":"string"},"closedDates":{"type":"array","items":{"$ref":"#/$defs/date"}}},"additionalProperties":false},"audioTrack":{"title":"AudioTrack","type":"object","required":["title"],"anyOf":[{"required":["src"]},{"required":["script"]}],"properties":{"id":{"$ref":"#/$defs/id"},"title":{"type":"string","minLength":1},"language":{"$ref":"#/$defs/language"},"src":{"description":"Audio file (mp3, m4a, ogg), usually relative to the trip folder.","$ref":"#/$defs/resource"},"durationSec":{"type":"integer","minimum":0},"transcript":{"$ref":"#/$defs/text"},"script":{"description":"Reserved for text-to-speech generation at build time (not implemented yet). Ignored when src is set.","type":"string"}},"additionalProperties":false},"place":{"title":"Place","type":"object","required":["id","name"],"allOf":[{"$ref":"#/$defs/geo"}],"properties":{"id":{"$ref":"#/$defs/id"},"name":{"type":"string","minLength":1},"status":{"description":"Defaults to open. Stops on a closed place raise a warning.","enum":["open","closedTemporarily","closedPermanently"]},"category":{"description":"Free category used for filters, e.g. see, food, shop, fun, hotel, info.","type":"string"},"icon":{"description":"Icon name, e.g. temple, ramen, onsen.","type":"string"},"stars":{"description":"Rating / importance.","type":"integer","minimum":0,"maximum":5},"veg":{"description":"Vegetarian-friendly.","type":"boolean"},"glutenFree":{"type":"boolean"},"tags":{"type":"array","items":{"type":"string"},"uniqueItems":true},"description":{"description":"Short description (one line).","type":"string"},"info":{"description":"Long description.","$ref":"#/$defs/text"},"tip":{"description":"Practical advice, highlighted in the UI.","$ref":"#/$defs/text"},"visitDuration":{"description":"Suggested visit time as text, e.g. '2-3 hours; 4.5 if you join the workshops'.","type":"string"},"directions":{"description":"How to get there.","$ref":"#/$defs/text"},"url":{"$ref":"#/$defs/url"},"bookingUrl":{"description":"Where to book (hotels, restaurants, tickets).","$ref":"#/$defs/url"},"image":{"$ref":"#/$defs/resource"},"address":{"type":"string"},"phone":{"type":"string"},"googlePlaceId":{"type":"string"},"openingHours":{"$ref":"#/$defs/openingHours"},"price":{"description":"Typical cost (entrance ticket, average meal) as a number. Used when a stop has no price of its own.","$ref":"#/$defs/price"},"priceInfo":{"description":"Price details as text, e.g. 'adults 630 yen, students 210 yen, children free'.","type":"string"},"audio":{"type":"array","items":{"$ref":"#/$defs/audioTrack"}},"notes":{"$ref":"#/$defs/text"}},"patternProperties":{"^x-":{}},"unevaluatedProperties":false},"travel":{"title":"Travel","description":"How to reach this stop from the previous one (or from day.start for the first stop). Drawn as a route on the day map using the matching Google Maps travel mode.","type":"object","required":["mode"],"properties":{"mode":{"description":"Google Maps mapping: walk -> walking; train, subway, bus, tram, ferry -> transit; taxi, car -> driving; bike -> bicycling; flight, other -> straight line.","enum":["walk","train","subway","bus","tram","ferry","taxi","car","bike","flight","other"]},"durationMin":{"$ref":"#/$defs/durationMin"},"distanceKm":{"description":"Manual distance. When missing, the build computes it (route service, or straight line as a fallback). Walk legs add up to the day's walking km.","type":"number","minimum":0},"price":{"$ref":"#/$defs/price"},"line":{"description":"Line / service name, e.g. JR Sanyo Line.","type":"string"},"notes":{"$ref":"#/$defs/text"}},"additionalProperties":false},"dayStart":{"title":"DayStart","description":"Where the day starts: a place, an accommodation, or a free point. Defaults to the accommodation of the previous night.","type":"object","anyOf":[{"required":["placeId"]},{"required":["accommodationId"]},{"required":["title","lat","lng"]}],"allOf":[{"$ref":"#/$defs/geo"}],"properties":{"time":{"$ref":"#/$defs/time"},"placeId":{"description":"Reference to places[].id.","$ref":"#/$defs/id"},"accommodationId":{"description":"Reference to logistics.accommodations[].id.","$ref":"#/$defs/id"},"title":{"type":"string"},"address":{"type":"string"},"notes":{"$ref":"#/$defs/text"}},"unevaluatedProperties":false},"dayEnd":{"title":"DayEnd","description":"Where the day ends. Defaults to the accommodation of that night, else the start of the next day; the last day has no default.","type":"object","anyOf":[{"required":["placeId"]},{"required":["accommodationId"]},{"required":["title","lat","lng"]}],"allOf":[{"$ref":"#/$defs/geo"}],"properties":{"time":{"description":"Arrival time.","$ref":"#/$defs/time"},"placeId":{"description":"Reference to places[].id.","$ref":"#/$defs/id"},"accommodationId":{"description":"Reference to logistics.accommodations[].id.","$ref":"#/$defs/id"},"title":{"type":"string"},"address":{"type":"string"},"notes":{"$ref":"#/$defs/text"},"travel":{"description":"How to get from the last stop (or from the start when there are no stops) to the end.","$ref":"#/$defs/travel"}},"unevaluatedProperties":false},"stop":{"title":"Stop","type":"object","anyOf":[{"required":["placeId"]},{"required":["title"]}],"properties":{"id":{"description":"Optional but recommended: keeps the 'done' state stable when stops are reordered.","$ref":"#/$defs/id"},"time":{"$ref":"#/$defs/time"},"placeId":{"description":"Reference to places[].id.","$ref":"#/$defs/id"},"title":{"description":"Label for a stop without a place (e.g. 'Lunch around the station'), or an override of the place name.","type":"string"},"bookedId":{"description":"Reference to logistics.reservations[].id. The stop is locked in edit mode: it can only move together with its reservation, and the day date/time must match the reservation.","$ref":"#/$defs/id"},"durationMin":{"$ref":"#/$defs/durationMin"},"price":{"description":"Cost of this stop. Ignored when bookedId points to a reservation with a price; otherwise overrides places[].price.","$ref":"#/$defs/price"},"travel":{"$ref":"#/$defs/travel"},"audio":{"type":"array","items":{"$ref":"#/$defs/audioTrack"}},"notes":{"$ref":"#/$defs/text"}},"patternProperties":{"^x-":{}},"additionalProperties":false},"day":{"title":"Day","type":"object","required":["date","stops"],"properties":{"date":{"$ref":"#/$defs/date"},"title":{"type":"string"},"notes":{"$ref":"#/$defs/text"},"start":{"$ref":"#/$defs/dayStart"},"stops":{"type":"array","items":{"$ref":"#/$defs/stop"}},"end":{"$ref":"#/$defs/dayEnd"}},"patternProperties":{"^x-":{}},"additionalProperties":false},"accommodation":{"title":"Accommodation","type":"object","required":["id","name","checkIn","checkOut"],"allOf":[{"$ref":"#/$defs/geo"}],"properties":{"id":{"$ref":"#/$defs/id"},"name":{"type":"string","minLength":1},"placeId":{"description":"Optional link to a place in the catalog.","$ref":"#/$defs/id"},"address":{"type":"string"},"googlePlaceId":{"type":"string"},"checkIn":{"anyOf":[{"$ref":"#/$defs/date"},{"$ref":"#/$defs/localDateTime"}]},"checkOut":{"anyOf":[{"$ref":"#/$defs/date"},{"$ref":"#/$defs/localDateTime"}]},"price":{"description":"Total price of the stay.","$ref":"#/$defs/price"},"url":{"$ref":"#/$defs/url"},"notes":{"$ref":"#/$defs/text"}},"patternProperties":{"^x-":{}},"unevaluatedProperties":false},"transport":{"title":"Transport","type":"object","required":["id","type","title"],"properties":{"id":{"$ref":"#/$defs/id"},"type":{"enum":["flight","train","bus","ferry","car","pass","other"]},"title":{"type":"string","minLength":1},"from":{"type":"string"},"to":{"type":"string"},"departure":{"$ref":"#/$defs/localDateTime"},"departureTimezone":{"$ref":"#/$defs/timezone"},"arrival":{"$ref":"#/$defs/localDateTime"},"arrivalTimezone":{"$ref":"#/$defs/timezone"},"validFrom":{"description":"For passes.","$ref":"#/$defs/date"},"validTo":{"description":"For passes.","$ref":"#/$defs/date"},"price":{"$ref":"#/$defs/price"},"url":{"$ref":"#/$defs/url"},"notes":{"$ref":"#/$defs/text"}},"patternProperties":{"^x-":{}},"additionalProperties":false},"reservation":{"title":"Reservation","type":"object","required":["id","title","date"],"properties":{"id":{"$ref":"#/$defs/id"},"title":{"type":"string","minLength":1},"placeId":{"$ref":"#/$defs/id"},"date":{"$ref":"#/$defs/date"},"time":{"$ref":"#/$defs/time"},"partySize":{"type":"integer","minimum":1},"price":{"$ref":"#/$defs/price"},"url":{"$ref":"#/$defs/url"},"notes":{"$ref":"#/$defs/text"}},"patternProperties":{"^x-":{}},"additionalProperties":false},"logistics":{"title":"Logistics","type":"object","properties":{"accommodations":{"type":"array","items":{"$ref":"#/$defs/accommodation"}},"transports":{"type":"array","items":{"$ref":"#/$defs/transport"}},"reservations":{"type":"array","items":{"$ref":"#/$defs/reservation"}}},"additionalProperties":false}}};
+const schema31 = {"$schema":"https://json-schema.org/draft/2020-12/schema","$id":"https://travel-guide.local/schema/trip.schema.json","title":"Travel Guide trip","description":"One trip. Stored as trips/<slug>/trip.json or trip.json5; the folder name is the trip URL slug. All prices are in trip.currency. All local dates/times are in trip.timezone.","type":"object","required":["schemaVersion","trip","places","days"],"properties":{"$schema":{"type":"string"},"schemaVersion":{"const":1},"trip":{"$ref":"#/$defs/tripSettings"},"places":{"description":"Places catalog. Places not referenced by any stop are shown as the wishlist.","type":"array","items":{"$ref":"#/$defs/place"}},"days":{"type":"array","items":{"$ref":"#/$defs/day"}},"logistics":{"$ref":"#/$defs/logistics"}},"patternProperties":{"^x-":{}},"additionalProperties":false,"$defs":{"id":{"title":"Id","description":"Identifier, unique within its collection (places, stops, each logistics list).","type":"string","pattern":"^[A-Za-z0-9][A-Za-z0-9_-]*$"},"date":{"title":"LocalDate","description":"Local date, YYYY-MM-DD.","type":"string","pattern":"^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$"},"time":{"title":"LocalTime","description":"Local time, HH:MM (24h).","type":"string","pattern":"^([01]\\d|2[0-3]):[0-5]\\d$"},"localDateTime":{"title":"LocalDateTime","description":"Local date-time without offset, YYYY-MM-DDTHH:MM. Interpreted in trip.timezone unless a timezone is given next to it.","type":"string","pattern":"^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])T([01]\\d|2[0-3]):[0-5]\\d$"},"timezone":{"title":"Timezone","description":"IANA timezone name, e.g. Asia/Tokyo.","type":"string","pattern":"^[A-Za-z_]+(/[A-Za-z0-9_+-]+)*$"},"language":{"title":"Language","description":"BCP 47 language tag, e.g. it, en, ja, en-GB.","type":"string","pattern":"^[a-z]{2,3}(-[A-Z]{2})?$"},"currency":{"title":"Currency","description":"ISO 4217 code, e.g. JPY, EUR.","type":"string","pattern":"^[A-Z]{3}$"},"price":{"title":"Price","description":"Amount in trip.currency.","type":"number","minimum":0},"durationMin":{"title":"DurationMin","description":"Duration in minutes.","type":"integer","minimum":0},"resource":{"title":"Resource","description":"Absolute http(s) URL or a path relative to the trip folder (e.g. audio/museum.mp3).","type":"string","minLength":1},"url":{"title":"Url","type":"string","pattern":"^https?://"},"text":{"title":"MarkdownText","description":"Free text. Markdown is allowed.","type":"string"},"geo":{"title":"Geo","type":"object","properties":{"lat":{"type":"number","minimum":-90,"maximum":90},"lng":{"type":"number","minimum":-180,"maximum":180}},"dependentRequired":{"lat":["lng"],"lng":["lat"]}},"tripSettings":{"title":"TripSettings","type":"object","required":["title","startDate","endDate","timezone","currency","language"],"properties":{"title":{"type":"string","minLength":1},"subtitle":{"type":"string"},"description":{"$ref":"#/$defs/text"},"startDate":{"$ref":"#/$defs/date"},"endDate":{"$ref":"#/$defs/date"},"timezone":{"$ref":"#/$defs/timezone"},"currency":{"description":"Currency of every price in this file.","$ref":"#/$defs/currency"},"convertCurrency":{"description":"Rough fixed conversion shown next to prices, e.g. 1700 ¥ (≈ 10 €). Not live exchange rates.","type":"object","required":["currency","oneEquals"],"properties":{"currency":{"$ref":"#/$defs/currency"},"oneEquals":{"description":"How many units of trip.currency make 1 unit of this currency. With trip.currency JPY and currency EUR: 170 means 1 € = 170 ¥.","type":"number","exclusiveMinimum":0}},"additionalProperties":false},"language":{"description":"Language of the trip content. Also the default UI language when it is it or en.","$ref":"#/$defs/language"},"cover":{"$ref":"#/$defs/resource"}},"patternProperties":{"^x-":{}},"additionalProperties":false},"openingHours":{"title":"OpeningHours","type":"object","properties":{"text":{"description":"Human-readable hours, shown as is.","type":"string"},"weekly":{"description":"Machine-readable hours used for 'closed at that time' warnings. Missing day = closed. Ranges are HH:MM-HH:MM; an end past midnight may use 24:00-29:59.","type":"object","propertyNames":{"enum":["mon","tue","wed","thu","fri","sat","sun"]},"additionalProperties":{"type":"array","items":{"type":"string","pattern":"^([01]\\d|2[0-3]):[0-5]\\d-([01]\\d|2[0-9]):[0-5]\\d$"}}},"closures":{"description":"Human-readable closing days / holidays, e.g. 'Closed on Mondays, or Tuesday if Monday is a holiday'.","type":"string"},"closedDates":{"type":"array","items":{"$ref":"#/$defs/date"}}},"additionalProperties":false},"audioTrack":{"title":"AudioTrack","type":"object","required":["title"],"anyOf":[{"required":["src"]},{"required":["script"]}],"properties":{"id":{"$ref":"#/$defs/id"},"title":{"type":"string","minLength":1},"language":{"$ref":"#/$defs/language"},"src":{"description":"Audio file (mp3, m4a, ogg), usually relative to the trip folder.","$ref":"#/$defs/resource"},"durationSec":{"type":"integer","minimum":0},"transcript":{"$ref":"#/$defs/text"},"script":{"description":"Reserved for text-to-speech generation at build time (not implemented yet). Ignored when src is set.","type":"string"}},"additionalProperties":false},"place":{"title":"Place","type":"object","required":["id","name"],"allOf":[{"$ref":"#/$defs/geo"}],"properties":{"id":{"$ref":"#/$defs/id"},"name":{"type":"string","minLength":1},"status":{"description":"Defaults to open. Stops on a closed place raise a warning.","enum":["open","closedTemporarily","closedPermanently"]},"category":{"description":"Free category used for filters, e.g. see, food, shop, fun, hotel, info.","type":"string"},"icon":{"description":"Icon name, e.g. temple, ramen, onsen.","type":"string"},"stars":{"description":"Rating / importance.","type":"integer","minimum":0,"maximum":5},"tags":{"type":"array","items":{"type":"string"},"uniqueItems":true},"description":{"description":"Short description (one line).","type":"string"},"info":{"description":"Long description.","$ref":"#/$defs/text"},"tip":{"description":"Practical advice, highlighted in the UI.","$ref":"#/$defs/text"},"visitDuration":{"description":"Suggested visit time as text, e.g. '2-3 hours; 4.5 if you join the workshops'.","type":"string"},"directions":{"description":"How to get there.","$ref":"#/$defs/text"},"url":{"$ref":"#/$defs/url"},"bookingUrl":{"description":"Where to book (hotels, restaurants, tickets).","$ref":"#/$defs/url"},"image":{"$ref":"#/$defs/resource"},"address":{"type":"string"},"phone":{"type":"string"},"googlePlaceId":{"type":"string"},"openingHours":{"$ref":"#/$defs/openingHours"},"price":{"description":"Typical cost (entrance ticket, average meal) as a number. Used when a stop has no price of its own.","$ref":"#/$defs/price"},"priceInfo":{"description":"Price details as text, e.g. 'adults 630 yen, students 210 yen, children free'.","type":"string"},"audio":{"type":"array","items":{"$ref":"#/$defs/audioTrack"}},"notes":{"$ref":"#/$defs/text"}},"patternProperties":{"^x-":{}},"unevaluatedProperties":false},"travel":{"title":"Travel","description":"How to reach this stop from the previous one (or from day.start for the first stop). Drawn as a route on the day map using the matching Google Maps travel mode.","type":"object","required":["mode"],"properties":{"mode":{"description":"Google Maps mapping: walk -> walking; train, subway, bus, tram, ferry -> transit; taxi, car -> driving; bike -> bicycling; flight, other -> straight line.","enum":["walk","train","subway","bus","tram","ferry","taxi","car","bike","flight","other"]},"durationMin":{"$ref":"#/$defs/durationMin"},"distanceKm":{"description":"Manual distance. When missing, the build computes it (route service, or straight line as a fallback). Walk legs add up to the day's walking km.","type":"number","minimum":0},"price":{"$ref":"#/$defs/price"},"line":{"description":"Line / service name, e.g. JR Sanyo Line.","type":"string"},"notes":{"$ref":"#/$defs/text"}},"additionalProperties":false},"dayStart":{"title":"DayStart","description":"Where the day starts: a place, an accommodation, or a free point. Defaults to the accommodation of the previous night.","type":"object","anyOf":[{"required":["placeId"]},{"required":["accommodationId"]},{"required":["title","lat","lng"]}],"allOf":[{"$ref":"#/$defs/geo"}],"properties":{"time":{"$ref":"#/$defs/time"},"placeId":{"description":"Reference to places[].id.","$ref":"#/$defs/id"},"accommodationId":{"description":"Reference to logistics.accommodations[].id.","$ref":"#/$defs/id"},"title":{"type":"string"},"address":{"type":"string"},"notes":{"$ref":"#/$defs/text"}},"unevaluatedProperties":false},"dayEnd":{"title":"DayEnd","description":"Where the day ends. Defaults to the accommodation of that night, else the start of the next day; the last day has no default.","type":"object","anyOf":[{"required":["placeId"]},{"required":["accommodationId"]},{"required":["title","lat","lng"]}],"allOf":[{"$ref":"#/$defs/geo"}],"properties":{"time":{"description":"Arrival time.","$ref":"#/$defs/time"},"placeId":{"description":"Reference to places[].id.","$ref":"#/$defs/id"},"accommodationId":{"description":"Reference to logistics.accommodations[].id.","$ref":"#/$defs/id"},"title":{"type":"string"},"address":{"type":"string"},"notes":{"$ref":"#/$defs/text"},"travel":{"description":"How to get from the last stop (or from the start when there are no stops) to the end.","$ref":"#/$defs/travel"}},"unevaluatedProperties":false},"stop":{"title":"Stop","type":"object","anyOf":[{"required":["placeId"]},{"required":["title"]}],"properties":{"id":{"description":"Optional but recommended: keeps the 'done' state stable when stops are reordered.","$ref":"#/$defs/id"},"time":{"$ref":"#/$defs/time"},"placeId":{"description":"Reference to places[].id.","$ref":"#/$defs/id"},"title":{"description":"Label for a stop without a place (e.g. 'Lunch around the station'), or an override of the place name.","type":"string"},"bookedId":{"description":"Reference to logistics.reservations[].id. The stop is locked in edit mode: it can only move together with its reservation, and the day date/time must match the reservation.","$ref":"#/$defs/id"},"durationMin":{"$ref":"#/$defs/durationMin"},"price":{"description":"Cost of this stop. Ignored when bookedId points to a reservation with a price; otherwise overrides places[].price.","$ref":"#/$defs/price"},"travel":{"$ref":"#/$defs/travel"},"audio":{"type":"array","items":{"$ref":"#/$defs/audioTrack"}},"notes":{"$ref":"#/$defs/text"}},"patternProperties":{"^x-":{}},"additionalProperties":false},"day":{"title":"Day","type":"object","required":["date","stops"],"properties":{"date":{"$ref":"#/$defs/date"},"title":{"type":"string"},"notes":{"$ref":"#/$defs/text"},"start":{"$ref":"#/$defs/dayStart"},"stops":{"type":"array","items":{"$ref":"#/$defs/stop"}},"end":{"$ref":"#/$defs/dayEnd"}},"patternProperties":{"^x-":{}},"additionalProperties":false},"accommodation":{"title":"Accommodation","type":"object","required":["id","name","checkIn","checkOut"],"allOf":[{"$ref":"#/$defs/geo"}],"properties":{"id":{"$ref":"#/$defs/id"},"name":{"type":"string","minLength":1},"placeId":{"description":"Optional link to a place in the catalog.","$ref":"#/$defs/id"},"address":{"type":"string"},"googlePlaceId":{"type":"string"},"checkIn":{"anyOf":[{"$ref":"#/$defs/date"},{"$ref":"#/$defs/localDateTime"}]},"checkOut":{"anyOf":[{"$ref":"#/$defs/date"},{"$ref":"#/$defs/localDateTime"}]},"price":{"description":"Total price of the stay.","$ref":"#/$defs/price"},"url":{"$ref":"#/$defs/url"},"notes":{"$ref":"#/$defs/text"}},"patternProperties":{"^x-":{}},"unevaluatedProperties":false},"transport":{"title":"Transport","type":"object","required":["id","type","title"],"properties":{"id":{"$ref":"#/$defs/id"},"type":{"enum":["flight","train","bus","ferry","car","pass","other"]},"title":{"type":"string","minLength":1},"from":{"type":"string"},"to":{"type":"string"},"departure":{"$ref":"#/$defs/localDateTime"},"departureTimezone":{"$ref":"#/$defs/timezone"},"arrival":{"$ref":"#/$defs/localDateTime"},"arrivalTimezone":{"$ref":"#/$defs/timezone"},"validFrom":{"description":"For passes.","$ref":"#/$defs/date"},"validTo":{"description":"For passes.","$ref":"#/$defs/date"},"price":{"$ref":"#/$defs/price"},"url":{"$ref":"#/$defs/url"},"notes":{"$ref":"#/$defs/text"}},"patternProperties":{"^x-":{}},"additionalProperties":false},"reservation":{"title":"Reservation","type":"object","required":["id","title","date"],"properties":{"id":{"$ref":"#/$defs/id"},"title":{"type":"string","minLength":1},"placeId":{"$ref":"#/$defs/id"},"date":{"$ref":"#/$defs/date"},"time":{"$ref":"#/$defs/time"},"partySize":{"type":"integer","minimum":1},"price":{"$ref":"#/$defs/price"},"url":{"$ref":"#/$defs/url"},"notes":{"$ref":"#/$defs/text"}},"patternProperties":{"^x-":{}},"additionalProperties":false},"logistics":{"title":"Logistics","type":"object","properties":{"accommodations":{"type":"array","items":{"$ref":"#/$defs/accommodation"}},"transports":{"type":"array","items":{"$ref":"#/$defs/transport"}},"reservations":{"type":"array","items":{"$ref":"#/$defs/reservation"}}},"additionalProperties":false}}};
 const pattern4 = new RegExp("^x-", "u");
 const schema32 = {"title":"TripSettings","type":"object","required":["title","startDate","endDate","timezone","currency","language"],"properties":{"title":{"type":"string","minLength":1},"subtitle":{"type":"string"},"description":{"$ref":"#/$defs/text"},"startDate":{"$ref":"#/$defs/date"},"endDate":{"$ref":"#/$defs/date"},"timezone":{"$ref":"#/$defs/timezone"},"currency":{"description":"Currency of every price in this file.","$ref":"#/$defs/currency"},"convertCurrency":{"description":"Rough fixed conversion shown next to prices, e.g. 1700 ¥ (≈ 10 €). Not live exchange rates.","type":"object","required":["currency","oneEquals"],"properties":{"currency":{"$ref":"#/$defs/currency"},"oneEquals":{"description":"How many units of trip.currency make 1 unit of this currency. With trip.currency JPY and currency EUR: 170 means 1 € = 170 ¥.","type":"number","exclusiveMinimum":0}},"additionalProperties":false},"language":{"description":"Language of the trip content. Also the default UI language when it is it or en.","$ref":"#/$defs/language"},"cover":{"$ref":"#/$defs/resource"}},"patternProperties":{"^x-":{}},"additionalProperties":false};
 const schema33 = {"title":"MarkdownText","description":"Free text. Markdown is allowed.","type":"string"};
@@ -430,7 +430,7 @@ return errors === 0;
 }
 validate21.evaluated = {"props":true,"dynamicProps":false,"dynamicItems":false};
 
-const schema41 = {"title":"Place","type":"object","required":["id","name"],"allOf":[{"$ref":"#/$defs/geo"}],"properties":{"id":{"$ref":"#/$defs/id"},"name":{"type":"string","minLength":1},"status":{"description":"Defaults to open. Stops on a closed place raise a warning.","enum":["open","closedTemporarily","closedPermanently"]},"category":{"description":"Free category used for filters, e.g. see, food, shop, fun, hotel, info.","type":"string"},"icon":{"description":"Icon name, e.g. temple, ramen, onsen.","type":"string"},"stars":{"description":"Rating / importance.","type":"integer","minimum":0,"maximum":5},"veg":{"description":"Vegetarian-friendly.","type":"boolean"},"glutenFree":{"type":"boolean"},"tags":{"type":"array","items":{"type":"string"},"uniqueItems":true},"description":{"description":"Short description (one line).","type":"string"},"info":{"description":"Long description.","$ref":"#/$defs/text"},"tip":{"description":"Practical advice, highlighted in the UI.","$ref":"#/$defs/text"},"visitDuration":{"description":"Suggested visit time as text, e.g. '2-3 hours; 4.5 if you join the workshops'.","type":"string"},"directions":{"description":"How to get there.","$ref":"#/$defs/text"},"url":{"$ref":"#/$defs/url"},"bookingUrl":{"description":"Where to book (hotels, restaurants, tickets).","$ref":"#/$defs/url"},"image":{"$ref":"#/$defs/resource"},"address":{"type":"string"},"phone":{"type":"string"},"googlePlaceId":{"type":"string"},"openingHours":{"$ref":"#/$defs/openingHours"},"price":{"description":"Typical cost (entrance ticket, average meal) as a number. Used when a stop has no price of its own.","$ref":"#/$defs/price"},"priceInfo":{"description":"Price details as text, e.g. 'adults 630 yen, students 210 yen, children free'.","type":"string"},"audio":{"type":"array","items":{"$ref":"#/$defs/audioTrack"}},"notes":{"$ref":"#/$defs/text"}},"patternProperties":{"^x-":{}},"unevaluatedProperties":false};
+const schema41 = {"title":"Place","type":"object","required":["id","name"],"allOf":[{"$ref":"#/$defs/geo"}],"properties":{"id":{"$ref":"#/$defs/id"},"name":{"type":"string","minLength":1},"status":{"description":"Defaults to open. Stops on a closed place raise a warning.","enum":["open","closedTemporarily","closedPermanently"]},"category":{"description":"Free category used for filters, e.g. see, food, shop, fun, hotel, info.","type":"string"},"icon":{"description":"Icon name, e.g. temple, ramen, onsen.","type":"string"},"stars":{"description":"Rating / importance.","type":"integer","minimum":0,"maximum":5},"tags":{"type":"array","items":{"type":"string"},"uniqueItems":true},"description":{"description":"Short description (one line).","type":"string"},"info":{"description":"Long description.","$ref":"#/$defs/text"},"tip":{"description":"Practical advice, highlighted in the UI.","$ref":"#/$defs/text"},"visitDuration":{"description":"Suggested visit time as text, e.g. '2-3 hours; 4.5 if you join the workshops'.","type":"string"},"directions":{"description":"How to get there.","$ref":"#/$defs/text"},"url":{"$ref":"#/$defs/url"},"bookingUrl":{"description":"Where to book (hotels, restaurants, tickets).","$ref":"#/$defs/url"},"image":{"$ref":"#/$defs/resource"},"address":{"type":"string"},"phone":{"type":"string"},"googlePlaceId":{"type":"string"},"openingHours":{"$ref":"#/$defs/openingHours"},"price":{"description":"Typical cost (entrance ticket, average meal) as a number. Used when a stop has no price of its own.","$ref":"#/$defs/price"},"priceInfo":{"description":"Price details as text, e.g. 'adults 630 yen, students 210 yen, children free'.","type":"string"},"audio":{"type":"array","items":{"$ref":"#/$defs/audioTrack"}},"notes":{"$ref":"#/$defs/text"}},"patternProperties":{"^x-":{}},"unevaluatedProperties":false};
 const schema42 = {"title":"Geo","type":"object","properties":{"lat":{"type":"number","minimum":-90,"maximum":90},"lng":{"type":"number","minimum":-180,"maximum":180}},"dependentRequired":{"lat":["lng"],"lng":["lat"]}};
 const schema43 = {"title":"Id","description":"Identifier, unique within its collection (places, stops, each logistics list).","type":"string","pattern":"^[A-Za-z0-9][A-Za-z0-9_-]*$"};
 const schema47 = {"title":"Url","type":"string","pattern":"^https?://"};
@@ -1143,9 +1143,13 @@ errors++;
 }
 }
 }
-if(data.veg !== undefined){
-if(typeof data.veg !== "boolean"){
-const err21 = {instancePath:instancePath+"/veg",schemaPath:"#/properties/veg/type",keyword:"type",params:{type: "boolean"},message:"must be boolean"};
+if(data.tags !== undefined){
+let data8 = data.tags;
+if(Array.isArray(data8)){
+const len0 = data8.length;
+for(let i0=0; i0<len0; i0++){
+if(typeof data8[i0] !== "string"){
+const err21 = {instancePath:instancePath+"/tags/" + i0,schemaPath:"#/properties/tags/items/type",keyword:"type",params:{type: "string"},message:"must be string"};
 if(vErrors === null){
 vErrors = [err21];
 }
@@ -1155,51 +1159,23 @@ vErrors.push(err21);
 errors++;
 }
 }
-if(data.glutenFree !== undefined){
-if(typeof data.glutenFree !== "boolean"){
-const err22 = {instancePath:instancePath+"/glutenFree",schemaPath:"#/properties/glutenFree/type",keyword:"type",params:{type: "boolean"},message:"must be boolean"};
-if(vErrors === null){
-vErrors = [err22];
-}
-else {
-vErrors.push(err22);
-}
-errors++;
-}
-}
-if(data.tags !== undefined){
-let data10 = data.tags;
-if(Array.isArray(data10)){
-const len0 = data10.length;
-for(let i0=0; i0<len0; i0++){
-if(typeof data10[i0] !== "string"){
-const err23 = {instancePath:instancePath+"/tags/" + i0,schemaPath:"#/properties/tags/items/type",keyword:"type",params:{type: "string"},message:"must be string"};
-if(vErrors === null){
-vErrors = [err23];
-}
-else {
-vErrors.push(err23);
-}
-errors++;
-}
-}
-let i1 = data10.length;
+let i1 = data8.length;
 let j0;
 if(i1 > 1){
 const indices0 = {};
 for(;i1--;){
-let item0 = data10[i1];
+let item0 = data8[i1];
 if(typeof item0 !== "string"){
 continue;
 }
 if(typeof indices0[item0] == "number"){
 j0 = indices0[item0];
-const err24 = {instancePath:instancePath+"/tags",schemaPath:"#/properties/tags/uniqueItems",keyword:"uniqueItems",params:{i: i1, j: j0},message:"must NOT have duplicate items (items ## "+j0+" and "+i1+" are identical)"};
+const err22 = {instancePath:instancePath+"/tags",schemaPath:"#/properties/tags/uniqueItems",keyword:"uniqueItems",params:{i: i1, j: j0},message:"must NOT have duplicate items (items ## "+j0+" and "+i1+" are identical)"};
 if(vErrors === null){
-vErrors = [err24];
+vErrors = [err22];
 }
 else {
-vErrors.push(err24);
+vErrors.push(err22);
 }
 errors++;
 break;
@@ -1209,7 +1185,31 @@ indices0[item0] = i1;
 }
 }
 else {
-const err25 = {instancePath:instancePath+"/tags",schemaPath:"#/properties/tags/type",keyword:"type",params:{type: "array"},message:"must be array"};
+const err23 = {instancePath:instancePath+"/tags",schemaPath:"#/properties/tags/type",keyword:"type",params:{type: "array"},message:"must be array"};
+if(vErrors === null){
+vErrors = [err23];
+}
+else {
+vErrors.push(err23);
+}
+errors++;
+}
+}
+if(data.description !== undefined){
+if(typeof data.description !== "string"){
+const err24 = {instancePath:instancePath+"/description",schemaPath:"#/properties/description/type",keyword:"type",params:{type: "string"},message:"must be string"};
+if(vErrors === null){
+vErrors = [err24];
+}
+else {
+vErrors.push(err24);
+}
+errors++;
+}
+}
+if(data.info !== undefined){
+if(typeof data.info !== "string"){
+const err25 = {instancePath:instancePath+"/info",schemaPath:"#/$defs/text/type",keyword:"type",params:{type: "string"},message:"must be string"};
 if(vErrors === null){
 vErrors = [err25];
 }
@@ -1219,9 +1219,9 @@ vErrors.push(err25);
 errors++;
 }
 }
-if(data.description !== undefined){
-if(typeof data.description !== "string"){
-const err26 = {instancePath:instancePath+"/description",schemaPath:"#/properties/description/type",keyword:"type",params:{type: "string"},message:"must be string"};
+if(data.tip !== undefined){
+if(typeof data.tip !== "string"){
+const err26 = {instancePath:instancePath+"/tip",schemaPath:"#/$defs/text/type",keyword:"type",params:{type: "string"},message:"must be string"};
 if(vErrors === null){
 vErrors = [err26];
 }
@@ -1231,9 +1231,9 @@ vErrors.push(err26);
 errors++;
 }
 }
-if(data.info !== undefined){
-if(typeof data.info !== "string"){
-const err27 = {instancePath:instancePath+"/info",schemaPath:"#/$defs/text/type",keyword:"type",params:{type: "string"},message:"must be string"};
+if(data.visitDuration !== undefined){
+if(typeof data.visitDuration !== "string"){
+const err27 = {instancePath:instancePath+"/visitDuration",schemaPath:"#/properties/visitDuration/type",keyword:"type",params:{type: "string"},message:"must be string"};
 if(vErrors === null){
 vErrors = [err27];
 }
@@ -1243,9 +1243,9 @@ vErrors.push(err27);
 errors++;
 }
 }
-if(data.tip !== undefined){
-if(typeof data.tip !== "string"){
-const err28 = {instancePath:instancePath+"/tip",schemaPath:"#/$defs/text/type",keyword:"type",params:{type: "string"},message:"must be string"};
+if(data.directions !== undefined){
+if(typeof data.directions !== "string"){
+const err28 = {instancePath:instancePath+"/directions",schemaPath:"#/$defs/text/type",keyword:"type",params:{type: "string"},message:"must be string"};
 if(vErrors === null){
 vErrors = [err28];
 }
@@ -1255,9 +1255,11 @@ vErrors.push(err28);
 errors++;
 }
 }
-if(data.visitDuration !== undefined){
-if(typeof data.visitDuration !== "string"){
-const err29 = {instancePath:instancePath+"/visitDuration",schemaPath:"#/properties/visitDuration/type",keyword:"type",params:{type: "string"},message:"must be string"};
+if(data.url !== undefined){
+let data15 = data.url;
+if(typeof data15 === "string"){
+if(!pattern13.test(data15)){
+const err29 = {instancePath:instancePath+"/url",schemaPath:"#/$defs/url/pattern",keyword:"pattern",params:{pattern: "^https?://"},message:"must match pattern \""+"^https?://"+"\""};
 if(vErrors === null){
 vErrors = [err29];
 }
@@ -1267,9 +1269,8 @@ vErrors.push(err29);
 errors++;
 }
 }
-if(data.directions !== undefined){
-if(typeof data.directions !== "string"){
-const err30 = {instancePath:instancePath+"/directions",schemaPath:"#/$defs/text/type",keyword:"type",params:{type: "string"},message:"must be string"};
+else {
+const err30 = {instancePath:instancePath+"/url",schemaPath:"#/$defs/url/type",keyword:"type",params:{type: "string"},message:"must be string"};
 if(vErrors === null){
 vErrors = [err30];
 }
@@ -1279,11 +1280,11 @@ vErrors.push(err30);
 errors++;
 }
 }
-if(data.url !== undefined){
-let data17 = data.url;
-if(typeof data17 === "string"){
-if(!pattern13.test(data17)){
-const err31 = {instancePath:instancePath+"/url",schemaPath:"#/$defs/url/pattern",keyword:"pattern",params:{pattern: "^https?://"},message:"must match pattern \""+"^https?://"+"\""};
+if(data.bookingUrl !== undefined){
+let data16 = data.bookingUrl;
+if(typeof data16 === "string"){
+if(!pattern13.test(data16)){
+const err31 = {instancePath:instancePath+"/bookingUrl",schemaPath:"#/$defs/url/pattern",keyword:"pattern",params:{pattern: "^https?://"},message:"must match pattern \""+"^https?://"+"\""};
 if(vErrors === null){
 vErrors = [err31];
 }
@@ -1294,7 +1295,7 @@ errors++;
 }
 }
 else {
-const err32 = {instancePath:instancePath+"/url",schemaPath:"#/$defs/url/type",keyword:"type",params:{type: "string"},message:"must be string"};
+const err32 = {instancePath:instancePath+"/bookingUrl",schemaPath:"#/$defs/url/type",keyword:"type",params:{type: "string"},message:"must be string"};
 if(vErrors === null){
 vErrors = [err32];
 }
@@ -1304,11 +1305,11 @@ vErrors.push(err32);
 errors++;
 }
 }
-if(data.bookingUrl !== undefined){
-let data18 = data.bookingUrl;
-if(typeof data18 === "string"){
-if(!pattern13.test(data18)){
-const err33 = {instancePath:instancePath+"/bookingUrl",schemaPath:"#/$defs/url/pattern",keyword:"pattern",params:{pattern: "^https?://"},message:"must match pattern \""+"^https?://"+"\""};
+if(data.image !== undefined){
+let data17 = data.image;
+if(typeof data17 === "string"){
+if(func2(data17) < 1){
+const err33 = {instancePath:instancePath+"/image",schemaPath:"#/$defs/resource/minLength",keyword:"minLength",params:{limit: 1},message:"must NOT have fewer than 1 characters"};
 if(vErrors === null){
 vErrors = [err33];
 }
@@ -1319,7 +1320,7 @@ errors++;
 }
 }
 else {
-const err34 = {instancePath:instancePath+"/bookingUrl",schemaPath:"#/$defs/url/type",keyword:"type",params:{type: "string"},message:"must be string"};
+const err34 = {instancePath:instancePath+"/image",schemaPath:"#/$defs/resource/type",keyword:"type",params:{type: "string"},message:"must be string"};
 if(vErrors === null){
 vErrors = [err34];
 }
@@ -1329,11 +1330,9 @@ vErrors.push(err34);
 errors++;
 }
 }
-if(data.image !== undefined){
-let data19 = data.image;
-if(typeof data19 === "string"){
-if(func2(data19) < 1){
-const err35 = {instancePath:instancePath+"/image",schemaPath:"#/$defs/resource/minLength",keyword:"minLength",params:{limit: 1},message:"must NOT have fewer than 1 characters"};
+if(data.address !== undefined){
+if(typeof data.address !== "string"){
+const err35 = {instancePath:instancePath+"/address",schemaPath:"#/properties/address/type",keyword:"type",params:{type: "string"},message:"must be string"};
 if(vErrors === null){
 vErrors = [err35];
 }
@@ -1343,8 +1342,9 @@ vErrors.push(err35);
 errors++;
 }
 }
-else {
-const err36 = {instancePath:instancePath+"/image",schemaPath:"#/$defs/resource/type",keyword:"type",params:{type: "string"},message:"must be string"};
+if(data.phone !== undefined){
+if(typeof data.phone !== "string"){
+const err36 = {instancePath:instancePath+"/phone",schemaPath:"#/properties/phone/type",keyword:"type",params:{type: "string"},message:"must be string"};
 if(vErrors === null){
 vErrors = [err36];
 }
@@ -1354,38 +1354,14 @@ vErrors.push(err36);
 errors++;
 }
 }
-if(data.address !== undefined){
-if(typeof data.address !== "string"){
-const err37 = {instancePath:instancePath+"/address",schemaPath:"#/properties/address/type",keyword:"type",params:{type: "string"},message:"must be string"};
+if(data.googlePlaceId !== undefined){
+if(typeof data.googlePlaceId !== "string"){
+const err37 = {instancePath:instancePath+"/googlePlaceId",schemaPath:"#/properties/googlePlaceId/type",keyword:"type",params:{type: "string"},message:"must be string"};
 if(vErrors === null){
 vErrors = [err37];
 }
 else {
 vErrors.push(err37);
-}
-errors++;
-}
-}
-if(data.phone !== undefined){
-if(typeof data.phone !== "string"){
-const err38 = {instancePath:instancePath+"/phone",schemaPath:"#/properties/phone/type",keyword:"type",params:{type: "string"},message:"must be string"};
-if(vErrors === null){
-vErrors = [err38];
-}
-else {
-vErrors.push(err38);
-}
-errors++;
-}
-}
-if(data.googlePlaceId !== undefined){
-if(typeof data.googlePlaceId !== "string"){
-const err39 = {instancePath:instancePath+"/googlePlaceId",schemaPath:"#/properties/googlePlaceId/type",keyword:"type",params:{type: "string"},message:"must be string"};
-if(vErrors === null){
-vErrors = [err39];
-}
-else {
-vErrors.push(err39);
 }
 errors++;
 }
@@ -1397,10 +1373,33 @@ errors = vErrors.length;
 }
 }
 if(data.price !== undefined){
-let data24 = data.price;
-if((typeof data24 == "number") && (isFinite(data24))){
-if(data24 < 0 || isNaN(data24)){
-const err40 = {instancePath:instancePath+"/price",schemaPath:"#/$defs/price/minimum",keyword:"minimum",params:{comparison: ">=", limit: 0},message:"must be >= 0"};
+let data22 = data.price;
+if((typeof data22 == "number") && (isFinite(data22))){
+if(data22 < 0 || isNaN(data22)){
+const err38 = {instancePath:instancePath+"/price",schemaPath:"#/$defs/price/minimum",keyword:"minimum",params:{comparison: ">=", limit: 0},message:"must be >= 0"};
+if(vErrors === null){
+vErrors = [err38];
+}
+else {
+vErrors.push(err38);
+}
+errors++;
+}
+}
+else {
+const err39 = {instancePath:instancePath+"/price",schemaPath:"#/$defs/price/type",keyword:"type",params:{type: "number"},message:"must be number"};
+if(vErrors === null){
+vErrors = [err39];
+}
+else {
+vErrors.push(err39);
+}
+errors++;
+}
+}
+if(data.priceInfo !== undefined){
+if(typeof data.priceInfo !== "string"){
+const err40 = {instancePath:instancePath+"/priceInfo",schemaPath:"#/properties/priceInfo/type",keyword:"type",params:{type: "string"},message:"must be string"};
 if(vErrors === null){
 vErrors = [err40];
 }
@@ -1410,8 +1409,19 @@ vErrors.push(err40);
 errors++;
 }
 }
+if(data.audio !== undefined){
+let data24 = data.audio;
+if(Array.isArray(data24)){
+const len1 = data24.length;
+for(let i2=0; i2<len1; i2++){
+if(!(validate26(data24[i2], {instancePath:instancePath+"/audio/" + i2,parentData:data24,parentDataProperty:i2,rootData,dynamicAnchors}))){
+vErrors = vErrors === null ? validate26.errors : vErrors.concat(validate26.errors);
+errors = vErrors.length;
+}
+}
+}
 else {
-const err41 = {instancePath:instancePath+"/price",schemaPath:"#/$defs/price/type",keyword:"type",params:{type: "number"},message:"must be number"};
+const err41 = {instancePath:instancePath+"/audio",schemaPath:"#/properties/audio/type",keyword:"type",params:{type: "array"},message:"must be array"};
 if(vErrors === null){
 vErrors = [err41];
 }
@@ -1421,48 +1431,14 @@ vErrors.push(err41);
 errors++;
 }
 }
-if(data.priceInfo !== undefined){
-if(typeof data.priceInfo !== "string"){
-const err42 = {instancePath:instancePath+"/priceInfo",schemaPath:"#/properties/priceInfo/type",keyword:"type",params:{type: "string"},message:"must be string"};
+if(data.notes !== undefined){
+if(typeof data.notes !== "string"){
+const err42 = {instancePath:instancePath+"/notes",schemaPath:"#/$defs/text/type",keyword:"type",params:{type: "string"},message:"must be string"};
 if(vErrors === null){
 vErrors = [err42];
 }
 else {
 vErrors.push(err42);
-}
-errors++;
-}
-}
-if(data.audio !== undefined){
-let data26 = data.audio;
-if(Array.isArray(data26)){
-const len1 = data26.length;
-for(let i2=0; i2<len1; i2++){
-if(!(validate26(data26[i2], {instancePath:instancePath+"/audio/" + i2,parentData:data26,parentDataProperty:i2,rootData,dynamicAnchors}))){
-vErrors = vErrors === null ? validate26.errors : vErrors.concat(validate26.errors);
-errors = vErrors.length;
-}
-}
-}
-else {
-const err43 = {instancePath:instancePath+"/audio",schemaPath:"#/properties/audio/type",keyword:"type",params:{type: "array"},message:"must be array"};
-if(vErrors === null){
-vErrors = [err43];
-}
-else {
-vErrors.push(err43);
-}
-errors++;
-}
-}
-if(data.notes !== undefined){
-if(typeof data.notes !== "string"){
-const err44 = {instancePath:instancePath+"/notes",schemaPath:"#/$defs/text/type",keyword:"type",params:{type: "string"},message:"must be string"};
-if(vErrors === null){
-vErrors = [err44];
-}
-else {
-vErrors.push(err44);
 }
 errors++;
 }
@@ -1474,8 +1450,6 @@ props0.status = true;
 props0.category = true;
 props0.icon = true;
 props0.stars = true;
-props0.veg = true;
-props0.glutenFree = true;
 props0.tags = true;
 props0.description = true;
 props0.info = true;
@@ -1503,12 +1477,12 @@ props0[key0] = true;
 if(props0 !== true){
 for(const key1 in data){
 if(!props0 || !props0[key1]){
-const err45 = {instancePath,schemaPath:"#/unevaluatedProperties",keyword:"unevaluatedProperties",params:{unevaluatedProperty: key1},message:"must NOT have unevaluated properties"};
+const err43 = {instancePath,schemaPath:"#/unevaluatedProperties",keyword:"unevaluatedProperties",params:{unevaluatedProperty: key1},message:"must NOT have unevaluated properties"};
 if(vErrors === null){
-vErrors = [err45];
+vErrors = [err43];
 }
 else {
-vErrors.push(err45);
+vErrors.push(err43);
 }
 errors++;
 }
@@ -1516,12 +1490,12 @@ errors++;
 }
 }
 else {
-const err46 = {instancePath,schemaPath:"#/type",keyword:"type",params:{type: "object"},message:"must be object"};
+const err44 = {instancePath,schemaPath:"#/type",keyword:"type",params:{type: "object"},message:"must be object"};
 if(vErrors === null){
-vErrors = [err46];
+vErrors = [err44];
 }
 else {
-vErrors.push(err46);
+vErrors.push(err44);
 }
 errors++;
 }

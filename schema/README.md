@@ -82,7 +82,7 @@ Field mapping used by the POI converter (input: `poi_*.json`):
 | POI field | schema |
 | --- | --- |
 | `id` (number) | `id` (string) |
-| `cat`, `icon`, `stars`, `veg`, `name`, `lat`, `lng` | same names (`cat` → `category`) |
+| `cat`, `icon`, `stars`, `name`, `lat`, `lng` | same names (`cat` → `category`) |
 | `desc` / `info` / `consiglio` | `description` / `info` / `tip` |
 | `url` / `img` / `booking` | `url` / `image` / `bookingUrl` |
 | `indirizzo` / `telefono` / `placeid` | `address` / `phone` / `googlePlaceId` |
@@ -90,8 +90,7 @@ Field mapping used by the POI converter (input: `poi_*.json`):
 | `costo`, `costo_yen` | `priceInfo` |
 | `durata` / `come_arrivare` | `visitDuration` / `directions` |
 | `aperto: CLOSED_TEMPORARILY` | `status: closedTemporarily` |
-| `gf` | `glutenFree` |
-| `vegliv`, `vegcert` | dropped (`veg` is enough) |
+| `veg`, `vegliv`, `vegcert`, `gf` | dropped (no dietary fields) |
 | `pshare` | dropped (share slug) |
 
 ~92% of the `orario` strings follow the pattern `Lunedì - Domenica: dalle 10 alle 17; Martedì: chiuso`

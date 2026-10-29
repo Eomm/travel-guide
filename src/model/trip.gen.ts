@@ -115,11 +115,6 @@ export interface Place {
    * Rating / importance.
    */
   stars?: number
-  /**
-   * Vegetarian-friendly.
-   */
-  veg?: boolean
-  glutenFree?: boolean
   tags?: string[]
   /**
    * Short description (one line).
