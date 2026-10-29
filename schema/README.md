@@ -47,6 +47,19 @@ Warnings:
 - a stop on a place whose `status` is not `open`;
 - a stop or `start` without coordinates (it can't be placed on the map/route).
 
+Run them with `npm run check:trips`: it validates every `trips/*/trip.json5` (or `.json`) against the schema,
+runs the checks above and prints the errors and warnings of each trip; it exits with 1 when there is any error.
+Rules 1-5 and the warnings live in `src/model/checks.ts` (shared with the app), rule 6 in `scripts/check-trips.ts`.
+Notes: equal stop times are allowed and stops without `time` are skipped; opening hours are checked at the stop
+start `time` only (a range like `17:00-26:00` also covers the early hours of the next day).
+
+## Generated code
+
+`src/model/trip.gen.ts` (TypeScript types) and `src/model/validate-trip.gen.js` (a precompiled Ajv validator,
+so the browser doesn't compile the schema) are generated from `trip.schema.json`. After changing the schema run
+`npm run gen` and commit the result. In the types, `x-` keys are typed as
+`` [k: `x-${string}`]: unknown ``, so typos in known keys are still type errors.
+
 ## Budget rules
 
 Stop cost = price of the reservation in `bookedId` if it has one, else the stop `price`, else the place `price`.
