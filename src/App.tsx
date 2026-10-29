@@ -1,13 +1,6 @@
 import { Link, Route, Routes } from 'react-router'
-
-function Home() {
-  return (
-    <>
-      <h1>Travel Guide</h1>
-      <p>A personal travel guide. Trips will be listed here.</p>
-    </>
-  )
-}
+import Home from './pages/Home.tsx'
+import TripPage from './pages/TripPage.tsx'
 
 function NotFound() {
   return (
@@ -25,6 +18,7 @@ export default function App() {
     <main className="container">
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/:slug" element={<TripPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </main>
