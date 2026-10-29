@@ -1,0 +1,60 @@
+import { Link } from 'react-router'
+import { PlacesIcon } from '../../../components/icons.tsx'
+import Price from '../../../components/Price.tsx'
+import { useTrip } from '../../../data/trip-context.ts'
+import { useI18n } from '../../../i18n/i18n.ts'
+import { stopCost } from '../../../model/budget.ts'
+import { formatDuration } from '../../../model/format.ts'
+import { placeUrl } from '../../../model/maps.ts'
+import type { Point } from '../../../model/points.ts'
+import type { Stop } from '../../../model/trip.gen.ts'
+import { categoryText } from './labels.ts'
+import styles from './StopCard.module.css'
+
+export default function StopCard({ stop, point }: { stop: Stop; point: Point }) {
+  const { slug, trip } = useTrip()
+  const { lang, t } = useI18n()
+  const place = trip.places.find((p) => p.id === stop.placeId)
+  const reservation = trip.logistics?.reservations?.find((r) => r.id === stop.bookedId)
+  const cost = stopCost(stop, trip)
+  const maps = placeUrl(point)
+  return (
+    <article className={styles.card}>
+      {(stop.time || reservation) && (
+        <p className={styles.top}>
+          {stop.time && <span className={styles.time}>{stop.time}</span>}
+          {reservation && <span className={styles.badge}>{t('itinerary.booked')}</span>}
+        </p>
+      )}
+      <h3 className={styles.name}>
+        {place ? <Link to={`/${slug}/places/${encodeURIComponent(place.id)}`}>{point.name}</Link> : point.name}
+      </h3>
+      {(place?.category || place?.description) && (
+        <p className={styles.description}>
+          {place.category && <span className={styles.category}>{categoryText(place.category, t)}</span>}
+          {place.description}
+        </p>
+      )}
+      {(stop.durationMin !== undefined || cost !== undefined) && (
+        <p className={styles.meta}>
+          {stop.durationMin !== undefined && <span>{formatDuration(stop.durationMin, lang)}</span>}
+          {cost !== undefined && <Price amount={cost} />}
+        </p>
+      )}
+      {reservation && (
+        <p className={styles.booking}>
+          {reservation.title}
+          {reservation.time && ` · ${reservation.time}`}
+        </p>
+      )}
+      {stop.notes && <p className={styles.notes}>{stop.notes}</p>}
+      {maps && (
+        <a className={styles.maps} href={maps} target="_blank" rel="noreferrer"
+          aria-label={t('itinerary.mapsOf', { name: point.name })}>
+          <PlacesIcon />
+          {t('itinerary.maps')}
+        </a>
+      )}
+    </article>
+  )
+}

@@ -3,52 +3,14 @@
 }
 
 .dates {
-  margin-top: var(--space-1);
+  margin: var(--space-1) 0 var(--space-3);
   color: var(--color-muted);
 }
 
-.day {
-  margin-top: var(--space-5);
-}
-
-.dayTitle {
-  margin: 0 0 var(--space-2);
-  font-size: var(--font-size-lg);
-}
-
-.dayTitle::first-letter {
-  text-transform: uppercase;
-}
-
-.dayName {
-  display: block;
-  color: var(--color-muted);
-  font-size: var(--font-size-base);
-  font-weight: 400;
-}
-
-.stops {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  border: 1px solid var(--color-border);
+.empty {
+  padding: var(--space-5) var(--space-4);
+  border: 1px dashed var(--color-border);
   border-radius: var(--radius);
-  background: var(--color-surface);
-}
-
-.stop {
-  display: flex;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-}
-
-.stop + .stop {
-  border-top: 1px solid var(--color-border);
-}
-
-.time {
-  flex-shrink: 0;
-  width: 3rem;
   color: var(--color-muted);
-  font-variant-numeric: tabular-nums;
+  text-align: center;
 }

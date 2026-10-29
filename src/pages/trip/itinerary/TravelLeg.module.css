@@ -1,0 +1,75 @@
+.leg {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  color: var(--color-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* dashed line from the previous point to the next stop, behind the icon */
+.leg::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 15px;
+  border-left: 2px dashed var(--color-border);
+  content: '';
+}
+
+.icon {
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+.icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-2);
+  margin: 0;
+}
+
+.facts strong {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+/* `·` between the facts */
+.facts > * + *::before {
+  content: '· ';
+  color: var(--color-muted);
+}
+
+.notes {
+  margin: var(--space-1) 0 0;
+  white-space: pre-line;
+}
+
+.directions {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  min-height: var(--tap-size);
+  padding: 0 var(--space-1);
+  font-weight: 600;
+  text-decoration: none;
+}
