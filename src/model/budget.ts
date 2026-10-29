@@ -44,3 +44,24 @@ export function tripCost(trip: Trip): TripCost {
   }
   return { ...cost, total: cost.days + cost.accommodations + cost.transports + cost.reservations }
 }
+
+export interface MissingPrice {
+  date: string
+  stop: Stop
+  /** true: the travel leg to reach `stop` has no price; false: the stop cost is unknown. */
+  leg: boolean
+}
+
+/** Unknown costs, so the total is a lower bound: stops without a cost and non-walk legs without a price. */
+export function missingPrices(trip: Trip): MissingPrice[] {
+  return trip.days.flatMap((day) =>
+    day.stops.flatMap((stop) => {
+      const missing: MissingPrice[] = []
+      if (stop.travel && stop.travel.mode !== 'walk' && stop.travel.price === undefined) {
+        missing.push({ date: day.date, stop, leg: true })
+      }
+      if (stopCost(stop, trip) === undefined) missing.push({ date: day.date, stop, leg: false })
+      return missing
+    }),
+  )
+}
