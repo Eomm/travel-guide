@@ -1,6 +1,6 @@
 // Semantic checks that JSON Schema can't express (schema/README.md, "Checks done by the build").
 // Pure TypeScript: runs in Node (check:trips) and in the browser (edit mode).
-// Rule 6 (relative files exist) needs the file system and lives in scripts/check-trips.ts.
+// Rule 6 (relative files exist) needs the file system and lives in scripts/load-trips.ts.
 import type { Accommodation, Day, OpeningHours, Place, Trip } from './trip.gen.ts'
 import { formatPath, type Issue } from './issues.ts'
 

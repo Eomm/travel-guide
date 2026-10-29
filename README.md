@@ -17,3 +17,19 @@ npm run gen        # regenerate the trip types and validator after a schema chan
 ```
 
 The app is served under `/travel-guide/` by default; set `BASE_PATH` to build for a different base path.
+
+## Trips
+
+Each trip lives in its own folder, `trips/<slug>/trip.json5` (or `trip.json`), next to the files it references
+(audio, images); the folder name is the URL slug. See `schema/README.md` for the format.
+
+The Vite plugin `scripts/vite-plugin-trips.ts` publishes the trips as static data under `<base>data/`:
+
+- `data/index.json`: the list of trips (slug, title, subtitle, dates, cover), sorted by start date;
+- `data/<slug>/trip.json`: the validated trip as plain JSON;
+- `data/<slug>/<path>`: every relative file the trip references, at the same relative path.
+
+`npm run build` fails when any trip has errors (same report as `npm run check:trips`); warnings are printed only.
+`npm run dev` serves the same URLs from memory and reloads on changes in `trips/`: an invalid trip is left out
+and its errors are shown in the terminal and in the browser overlay. The app reads the data at runtime through
+`src/data/trips.ts` (`loadTripIndex`, `loadTrip`), never from the JS bundle.

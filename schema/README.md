@@ -49,7 +49,7 @@ Warnings:
 
 Run them with `npm run check:trips`: it validates every `trips/*/trip.json5` (or `.json`) against the schema,
 runs the checks above and prints the errors and warnings of each trip; it exits with 1 when there is any error.
-Rules 1-5 and the warnings live in `src/model/checks.ts` (shared with the app), rule 6 in `scripts/check-trips.ts`.
+Rules 1-5 and the warnings live in `src/model/checks.ts` (shared with the app), rule 6 in `scripts/load-trips.ts`.
 Notes: equal stop times are allowed and stops without `time` are skipped; opening hours are checked at the stop
 start `time` only (a range like `17:00-26:00` also covers the early hours of the next day).
 
