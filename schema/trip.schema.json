@@ -43,64 +43,77 @@
   "additionalProperties": false,
   "$defs": {
     "id": {
+      "title": "Id",
       "description": "Identifier, unique within its collection (places, stops, each logistics list).",
       "type": "string",
       "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$"
     },
     "date": {
+      "title": "LocalDate",
       "description": "Local date, YYYY-MM-DD.",
       "type": "string",
       "pattern": "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$"
     },
     "time": {
+      "title": "LocalTime",
       "description": "Local time, HH:MM (24h).",
       "type": "string",
       "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
     },
     "localDateTime": {
+      "title": "LocalDateTime",
       "description": "Local date-time without offset, YYYY-MM-DDTHH:MM. Interpreted in trip.timezone unless a timezone is given next to it.",
       "type": "string",
       "pattern": "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])T([01]\\d|2[0-3]):[0-5]\\d$"
     },
     "timezone": {
+      "title": "Timezone",
       "description": "IANA timezone name, e.g. Asia/Tokyo.",
       "type": "string",
       "pattern": "^[A-Za-z_]+(/[A-Za-z0-9_+-]+)*$"
     },
     "language": {
+      "title": "Language",
       "description": "BCP 47 language tag, e.g. it, en, ja, en-GB.",
       "type": "string",
       "pattern": "^[a-z]{2,3}(-[A-Z]{2})?$"
     },
     "currency": {
+      "title": "Currency",
       "description": "ISO 4217 code, e.g. JPY, EUR.",
       "type": "string",
       "pattern": "^[A-Z]{3}$"
     },
     "price": {
+      "title": "Price",
       "description": "Amount in trip.currency.",
       "type": "number",
       "minimum": 0
     },
     "durationMin": {
+      "title": "DurationMin",
       "description": "Duration in minutes.",
       "type": "integer",
       "minimum": 0
     },
     "resource": {
+      "title": "Resource",
       "description": "Absolute http(s) URL or a path relative to the trip folder (e.g. audio/museum.mp3).",
       "type": "string",
       "minLength": 1
     },
     "url": {
+      "title": "Url",
       "type": "string",
       "pattern": "^https?://"
     },
     "text": {
+      "title": "MarkdownText",
       "description": "Free text. Markdown is allowed.",
       "type": "string"
     },
     "geo": {
+      "title": "Geo",
       "type": "object",
       "properties": {
         "lat": {
@@ -124,6 +137,7 @@
       }
     },
     "tripSettings": {
+      "title": "TripSettings",
       "type": "object",
       "required": [
         "title",
@@ -190,6 +204,7 @@
       "additionalProperties": false
     },
     "openingHours": {
+      "title": "OpeningHours",
       "type": "object",
       "properties": {
         "text": {
@@ -232,6 +247,7 @@
       "additionalProperties": false
     },
     "audioTrack": {
+      "title": "AudioTrack",
       "type": "object",
       "required": [
         "title"
@@ -278,6 +294,7 @@
       "additionalProperties": false
     },
     "place": {
+      "title": "Place",
       "type": "object",
       "required": [
         "id",
@@ -398,6 +415,7 @@
       "unevaluatedProperties": false
     },
     "travel": {
+      "title": "Travel",
       "description": "How to reach this stop from the previous one (or from day.start for the first stop). Drawn as a route on the day map using the matching Google Maps travel mode.",
       "type": "object",
       "required": [
@@ -442,6 +460,7 @@
       "additionalProperties": false
     },
     "dayStart": {
+      "title": "DayStart",
       "description": "Where the day starts: a place, an accommodation, or a free point. Defaults to the accommodation of the previous night.",
       "type": "object",
       "anyOf": [
@@ -493,6 +512,7 @@
       "unevaluatedProperties": false
     },
     "stop": {
+      "title": "Stop",
       "type": "object",
       "anyOf": [
         {
@@ -552,6 +572,7 @@
       "additionalProperties": false
     },
     "day": {
+      "title": "Day",
       "type": "object",
       "required": [
         "date",
@@ -583,6 +604,7 @@
       "additionalProperties": false
     },
     "accommodation": {
+      "title": "Accommodation",
       "type": "object",
       "required": [
         "id",
@@ -650,6 +672,7 @@
       "unevaluatedProperties": false
     },
     "transport": {
+      "title": "Transport",
       "type": "object",
       "required": [
         "id",
@@ -717,6 +740,7 @@
       "additionalProperties": false
     },
     "reservation": {
+      "title": "Reservation",
       "type": "object",
       "required": [
         "id",
@@ -760,6 +784,7 @@
       "additionalProperties": false
     },
     "logistics": {
+      "title": "Logistics",
       "type": "object",
       "properties": {
         "accommodations": {
