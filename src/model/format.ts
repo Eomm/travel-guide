@@ -80,3 +80,19 @@ export function formatDuration(minutes: number, lang: Lang): string {
   const parts = [hours > 0 && `${number.format(hours)} h`, (rest > 0 || hours === 0) && `${number.format(rest)} min`]
   return parts.filter(Boolean).join(' ')
 }
+
+/** A local date (`YYYY-MM-DD`) or date-time (`YYYY-MM-DDTHH:MM`), with no timezone shift: `sab 10 apr, 15:00`. */
+export function formatLocalDateTime(value: string, lang: Lang, style: DateStyle = 'short'): string {
+  const [date, time] = value.split('T')
+  if (!time) return formatDate(date, lang, style)
+  const [hours, minutes] = time.split(':').map(Number)
+  const instant = new Date(utcDate(date).getTime() + (hours * 60 + minutes) * 60_000)
+  const format = new Intl.DateTimeFormat(locale(lang), {
+    ...dateStyles[style],
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+    timeZone: 'UTC',
+  })
+  return format.format(instant)
+}

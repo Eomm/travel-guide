@@ -142,3 +142,23 @@ export const PhoneIcon = () => (
     <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2" />
   </Icon>
 )
+
+export const HotelIcon = () => (
+  <Icon>
+    <path d="M3 19V6M3 15h18v4M21 15v-3a3 3 0 0 0-3-3h-7v6" />
+    <circle cx="7" cy="11" r="2" />
+  </Icon>
+)
+
+export const BookingIcon = () => (
+  <Icon>
+    <rect x="3" y="5" width="18" height="16" rx="2" />
+    <path d="M3 10h18M8 3v4M16 3v4M9 15.5l2 2 4-4" />
+  </Icon>
+)
+
+export const ExternalIcon = () => (
+  <Icon>
+    <path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
+  </Icon>
+)
