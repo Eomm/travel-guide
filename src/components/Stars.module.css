@@ -1,0 +1,10 @@
+.stars {
+  color: var(--color-warning);
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+.empty {
+  color: var(--color-muted);
+  opacity: 0.35;
+}

@@ -109,3 +109,36 @@ export const FlagIcon = () => (
     <path d="M5 21V4M5 4h12l-2.5 4.5L17 13H5" />
   </Icon>
 )
+
+export const SearchIcon = () => (
+  <Icon>
+    <circle cx="11" cy="11" r="7" />
+    <path d="M20 20l-4-4" />
+  </Icon>
+)
+
+export const FilterIcon = () => (
+  <Icon>
+    <path d="M4 6h16M7 12h10M10 18h4" />
+  </Icon>
+)
+
+export const GlobeIcon = () => (
+  <Icon>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" />
+  </Icon>
+)
+
+export const TicketIcon = () => (
+  <Icon>
+    <path d="M4 7h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4V7z" />
+    <path d="M14 7v10" strokeDasharray="2 2" />
+  </Icon>
+)
+
+export const PhoneIcon = () => (
+  <Icon>
+    <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2" />
+  </Icon>
+)
