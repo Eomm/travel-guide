@@ -77,17 +77,9 @@ export const en: Messages = {
 
   // places
   'places.title': 'Places',
-  'places.segments': 'Show',
-  'places.all': 'All',
-  'places.wishlist': 'Wishlist',
   'places.search': 'Search by name',
   'places.filters': 'Filters',
   'places.categories': 'Categories',
-  'places.veg': 'Vegetarian',
-  'places.glutenFree': 'Gluten-free',
-  'places.minStars': 'Minimum stars',
-  'places.anyStars': 'Any',
-  'places.starsAtLeast': 'At least {count}',
   'places.stars.one': '{count} star out of 5',
   'places.stars.other': '{count} stars out of 5',
   'places.count.one': '{count} place',
@@ -95,7 +87,7 @@ export const en: Messages = {
   'places.noResults': 'No place matches the filters.',
   'places.reset': 'Reset filters',
   'places.empty': 'No places yet.',
-  'places.emptyWishlist': 'Every place is already in the itinerary.',
+  'places.emptyWishlist': 'Every place is already in a day.',
   'places.closedTemporarily': 'Temporarily closed',
   'places.closedPermanently': 'Permanently closed',
   'places.inItinerary.one': 'In the itinerary: day {days}',
@@ -121,6 +113,7 @@ export const en: Messages = {
   'places.itinerary': 'In the itinerary',
   'places.inWishlist': 'In your wishlist: not in any day yet.',
   'places.dayNumber': 'Day {number}',
+  'places.onlyUnused': 'Only places not in any day',
 
   // logistics
   'logistics.title': 'Logistics',

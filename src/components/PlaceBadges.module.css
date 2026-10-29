@@ -17,7 +17,3 @@
 .closed {
   color: var(--color-danger);
 }
-
-.veg {
-  color: var(--color-success);
-}

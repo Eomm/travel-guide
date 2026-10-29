@@ -144,7 +144,7 @@ export default function PlaceDetail() {
       <div className={styles.meta}>
         {place.category && <span>{categoryLabel(place.category)}</span>}
         {place.stars !== undefined && <Stars count={place.stars} />}
-        <PlaceBadges place={place} glutenFree />
+        <PlaceBadges place={place} />
       </div>
       {place.description && <p className={styles.description}>{place.description}</p>}
 

@@ -1,39 +1,6 @@
-/* segmented control: All / Wishlist */
-.segments {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-1);
-  padding: var(--space-1);
-  border-radius: var(--radius);
-  background: var(--color-border);
-}
-
-.segments button {
-  min-height: calc(var(--tap-size) - 2 * var(--space-1));
-  border: 0;
-  border-radius: var(--radius-sm);
-  background: none;
-  color: var(--color-muted);
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.segments button[aria-pressed='true'] {
-  background: var(--color-surface);
-  color: var(--color-text);
-  box-shadow: var(--shadow);
-}
-
-.segmentCount {
-  color: var(--color-muted);
-  font-weight: 400;
-}
-
 .toolbar {
   display: flex;
   gap: var(--space-2);
-  margin-top: var(--space-3);
 }
 
 .search {
@@ -72,8 +39,7 @@
 
 .filtersButton,
 .chip,
-.reset,
-.stars select {
+.reset {
   min-height: var(--tap-size);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
@@ -129,16 +95,14 @@
   border: 0;
 }
 
-.fieldset legend,
-.stars span {
+.fieldset legend {
   margin-bottom: var(--space-1);
   padding: 0;
   color: var(--color-muted);
   font-size: var(--font-size-sm);
 }
 
-.chips,
-.row {
+.chips {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
@@ -155,15 +119,6 @@
   background: var(--color-accent-soft);
   color: var(--color-accent);
   font-weight: 600;
-}
-
-.stars {
-  display: flex;
-  flex-direction: column;
-}
-
-.stars select {
-  padding: 0 var(--space-2);
 }
 
 .reset {

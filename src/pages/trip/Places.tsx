@@ -10,27 +10,23 @@ import { categoryLabel, comparePlaces, normalizeText, placeCategories, placeUses
 import type { Place } from '../../model/trip.gen.ts'
 import styles from './Places.module.css'
 
-type Segment = 'all' | 'wishlist'
-
 interface Filters {
   query: string
   categories: string[]
-  veg: boolean
-  minStars: number
+  /** Wishlist: only places not used by any stop. */
+  onlyUnused: boolean
 }
 
-const noFilters: Filters = { query: '', categories: [], veg: false, minStars: 0 }
+const noFilters: Filters = { query: '', categories: [], onlyUnused: false }
 
-function matches(place: Place, filters: Filters): boolean {
+function matches(place: Place, filters: Filters, used: boolean): boolean {
   if (filters.query && !normalizeText(place.name).includes(normalizeText(filters.query))) return false
   if (filters.categories.length > 0 && !filters.categories.includes(place.category ?? '')) return false
-  if (filters.veg && !place.veg) return false
-  return (place.stars ?? 0) >= filters.minStars
+  return !(filters.onlyUnused && used)
 }
 
 /** Number of active filters besides the search text. */
-const activeFilters = (filters: Filters) =>
-  filters.categories.length + (filters.veg ? 1 : 0) + (filters.minStars > 0 ? 1 : 0)
+const activeFilters = (filters: Filters) => filters.categories.length + (filters.onlyUnused ? 1 : 0)
 
 function PlaceCard({ place, uses }: { place: Place; uses: PlaceUse[] }) {
   const { slug } = useTrip()
@@ -66,15 +62,12 @@ function PlaceCard({ place, uses }: { place: Place; uses: PlaceUse[] }) {
 export default function Places() {
   const { trip } = useTrip()
   const { t } = useI18n()
-  const [segment, setSegment] = useState<Segment>('all')
   const [filters, setFilters] = useState(noFilters)
   const [showFilters, setShowFilters] = useState(false)
 
   const uses = useMemo(() => placeUses(trip), [trip])
   const categories = useMemo(() => placeCategories(trip.places), [trip])
-  const wishlist = trip.places.filter((place) => !uses.has(place.id))
-  const segmentPlaces = segment === 'all' ? trip.places : wishlist
-  const visible = segmentPlaces.filter((place) => matches(place, filters)).sort(comparePlaces)
+  const visible = trip.places.filter((place) => matches(place, filters, uses.has(place.id))).sort(comparePlaces)
 
   const update = (patch: Partial<Filters>) => setFilters((current) => ({ ...current, ...patch }))
   const toggleCategory = (category: string) =>
@@ -85,23 +78,12 @@ export default function Places() {
     })
   const active = activeFilters(filters)
   const filtered = active > 0 || filters.query !== ''
-
-  const segments: { id: Segment; label: string; count: number }[] = [
-    { id: 'all', label: t('places.all'), count: trip.places.length },
-    { id: 'wishlist', label: t('places.wishlist'), count: wishlist.length },
-  ]
+  // only the wishlist filter is on: nothing left means every place is already in a day
+  const onlyWishlist = filters.onlyUnused && filters.categories.length === 0 && filters.query === ''
 
   return (
     <>
       <h1>{t('places.title')}</h1>
-
-      <div className={styles.segments} role="group" aria-label={t('places.segments')}>
-        {segments.map(({ id, label, count }) => (
-          <button key={id} type="button" aria-pressed={segment === id} onClick={() => setSegment(id)}>
-            {label} <span className={styles.segmentCount}>{count}</span>
-          </button>
-        ))}
-      </div>
 
       <div className={styles.toolbar}>
         <label className={styles.search}>
@@ -147,26 +129,15 @@ export default function Places() {
               </div>
             </fieldset>
           )}
-          <div className={styles.row}>
+          <div className={styles.chips}>
             <button
               type="button"
               className={styles.chip}
-              aria-pressed={filters.veg}
-              onClick={() => update({ veg: !filters.veg })}
+              aria-pressed={filters.onlyUnused}
+              onClick={() => update({ onlyUnused: !filters.onlyUnused })}
             >
-              {t('places.veg')}
+              {t('places.onlyUnused')}
             </button>
-            <label className={styles.stars}>
-              <span>{t('places.minStars')}</span>
-              <select value={filters.minStars} onChange={(event) => update({ minStars: Number(event.target.value) })}>
-                <option value={0}>{t('places.anyStars')}</option>
-                {[1, 2, 3, 4, 5].map((count) => (
-                  <option key={count} value={count}>
-                    {t('places.starsAtLeast', { count })}
-                  </option>
-                ))}
-              </select>
-            </label>
           </div>
           {filtered && (
             <button type="button" className={styles.reset} onClick={() => setFilters(noFilters)}>
@@ -191,8 +162,9 @@ export default function Places() {
       ) : (
         <div className={styles.empty}>
           <p>
-            {filtered && t('places.noResults')}
-            {!filtered && t(segment === 'wishlist' && trip.places.length > 0 ? 'places.emptyWishlist' : 'places.empty')}
+            {trip.places.length === 0
+              ? t('places.empty')
+              : t(onlyWishlist ? 'places.emptyWishlist' : 'places.noResults')}
           </p>
           {filtered && (
             <button type="button" className={styles.reset} onClick={() => setFilters(noFilters)}>

@@ -76,17 +76,9 @@ export const it = {
 
   // places
   'places.title': 'Luoghi',
-  'places.segments': 'Mostra',
-  'places.all': 'Tutti',
-  'places.wishlist': 'Wishlist',
   'places.search': 'Cerca per nome',
   'places.filters': 'Filtri',
   'places.categories': 'Categorie',
-  'places.veg': 'Vegetariano',
-  'places.glutenFree': 'Senza glutine',
-  'places.minStars': 'Stelle minime',
-  'places.anyStars': 'Qualsiasi',
-  'places.starsAtLeast': 'Almeno {count}',
   'places.stars.one': '{count} stella su 5',
   'places.stars.other': '{count} stelle su 5',
   'places.count.one': '{count} luogo',
@@ -94,7 +86,7 @@ export const it = {
   'places.noResults': 'Nessun luogo corrisponde ai filtri.',
   'places.reset': 'Azzera filtri',
   'places.empty': 'Ancora nessun luogo.',
-  'places.emptyWishlist': 'Tutti i luoghi sono già nell\'itinerario.',
+  'places.emptyWishlist': 'Tutti i luoghi sono già in un giorno.',
   'places.closedTemporarily': 'Chiuso temporaneamente',
   'places.closedPermanently': 'Chiuso definitivamente',
   'places.inItinerary.one': 'Nell\'itinerario: giorno {days}',
@@ -120,6 +112,7 @@ export const it = {
   'places.itinerary': 'Nell\'itinerario',
   'places.inWishlist': 'Nella tua wishlist: non è ancora in nessun giorno.',
   'places.dayNumber': 'Giorno {number}',
+  'places.onlyUnused': 'Solo luoghi non in nessun giorno',
 
   // logistics
   'logistics.title': 'Logistica',
