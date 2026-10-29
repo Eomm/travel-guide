@@ -28,7 +28,6 @@ export const it = {
   // itinerary
   'itinerary.title': 'Itinerario',
   'itinerary.empty': 'Nessun giorno in programma per ora.',
-  'itinerary.jumpTo': 'Vai al giorno',
   'itinerary.stopsOf': 'Tappe di {date}',
   'itinerary.start': 'Partenza',
   'itinerary.fromStay': 'da {name}',
@@ -60,6 +59,12 @@ export const it = {
   'itinerary.category.fun': 'Divertimento',
   'itinerary.category.hotel': 'Alloggio',
   'itinerary.category.info': 'Info',
+  'itinerary.days': 'Giorni del viaggio',
+  'itinerary.dayNumber': 'Giorno {n}',
+  'itinerary.dayNotFound': 'Il giorno {date} non è nel programma.',
+  'itinerary.dayNav': 'Giorno precedente e successivo',
+  'itinerary.previousDay': 'Giorno prima',
+  'itinerary.nextDay': 'Giorno dopo',
 
   // places
   'places.title': 'Luoghi',

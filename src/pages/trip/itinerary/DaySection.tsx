@@ -9,7 +9,7 @@ import { placeUrl } from '../../../model/maps.ts'
 import { dayLegs, dayStartPoint, type DayStartPoint, type Leg } from '../../../model/points.ts'
 import type { Day } from '../../../model/trip.gen.ts'
 import styles from './DaySection.module.css'
-import { dayAnchor, kmText } from './labels.ts'
+import { kmText } from './labels.ts'
 import StopCard from './StopCard.tsx'
 import TravelLeg from './TravelLeg.tsx'
 
@@ -45,7 +45,7 @@ function DayRecap({ day, legs }: { day: Day; legs: Leg[] }) {
   const walking = walkingKm(legs)
   return (
     <div className={styles.recap}>
-      <h3 className={styles.recapTitle}>{t('itinerary.recap')}</h3>
+      <h2 className={styles.recapTitle}>{t('itinerary.recap')}</h2>
       <dl className={styles.stats}>
         <div>
           <dt>{t('itinerary.stopCount')}</dt>
@@ -76,11 +76,11 @@ export default function DaySection({ day }: { day: Day }) {
   const legs = dayLegs(day, trip)
   const date = formatDate(day.date, lang, 'long')
   return (
-    <section id={dayAnchor(day)} className={styles.day}>
-      <h2 className={styles.heading}>
+    <section>
+      <h1 className={styles.heading}>
         <span className={styles.date}>{date}</span>
         {day.title && <span className={styles.title}>{day.title}</span>}
-      </h2>
+      </h1>
       {day.notes && <p className={styles.notes}>{day.notes}</p>}
       <ol className={styles.timeline} aria-label={t('itinerary.stopsOf', { date })}>
         {start && (

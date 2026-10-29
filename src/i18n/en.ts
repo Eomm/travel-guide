@@ -29,7 +29,6 @@ export const en: Messages = {
   // itinerary
   'itinerary.title': 'Itinerary',
   'itinerary.empty': 'No days planned yet.',
-  'itinerary.jumpTo': 'Jump to day',
   'itinerary.stopsOf': 'Stops of {date}',
   'itinerary.start': 'Start',
   'itinerary.fromStay': 'from {name}',
@@ -61,6 +60,12 @@ export const en: Messages = {
   'itinerary.category.fun': 'Fun',
   'itinerary.category.hotel': 'Stay',
   'itinerary.category.info': 'Info',
+  'itinerary.days': 'Trip days',
+  'itinerary.dayNumber': 'Day {n}',
+  'itinerary.dayNotFound': 'The day {date} is not in the plan.',
+  'itinerary.dayNav': 'Previous and next day',
+  'itinerary.previousDay': 'Previous day',
+  'itinerary.nextDay': 'Next day',
 
   // places
   'places.title': 'Places',

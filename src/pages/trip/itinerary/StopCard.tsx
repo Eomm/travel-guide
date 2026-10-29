@@ -26,9 +26,9 @@ export default function StopCard({ stop, point }: { stop: Stop; point: Point }) 
           {reservation && <span className={styles.badge}>{t('itinerary.booked')}</span>}
         </p>
       )}
-      <h3 className={styles.name}>
+      <h2 className={styles.name}>
         {place ? <Link to={`/${slug}/places/${encodeURIComponent(place.id)}`}>{point.name}</Link> : point.name}
-      </h3>
+      </h2>
       {(place?.category || place?.description) && (
         <p className={styles.description}>
           {place.category && <span className={styles.category}>{categoryText(place.category, t)}</span>}

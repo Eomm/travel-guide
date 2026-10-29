@@ -13,6 +13,7 @@ export default function App() {
       <Route index element={<Home />} />
       <Route path=":slug" element={<TripLayout />}>
         <Route index element={<Itinerary />} />
+        <Route path="day/:date" element={<Itinerary />} />
         <Route path="places" element={<Places />} />
         <Route path="logistics" element={<Logistics />} />
         <Route path="budget" element={<Budget />} />
