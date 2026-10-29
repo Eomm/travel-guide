@@ -62,6 +62,7 @@ export const it = {
   'itinerary.days': 'Giorni del viaggio',
   'itinerary.dayNumber': 'Giorno {n}',
   'itinerary.dayNotFound': 'Il giorno {date} non è nel programma.',
+  'itinerary.openDayInMaps': 'Apri il giorno in Google Maps',
   'itinerary.dayNav': 'Giorno precedente e successivo',
   'itinerary.previousDay': 'Giorno prima',
   'itinerary.nextDay': 'Giorno dopo',

@@ -46,3 +46,34 @@ export function directionsUrl(from: MapPoint, to: MapPoint, mode?: Travel['mode'
   if (travelmode) params.set('travelmode', travelmode)
   return `https://www.google.com/maps/dir/?${params}`
 }
+
+/** Google ignores more waypoints than this. */
+const maxWaypoints = 9
+
+/**
+ * Directions through all the points of a day, in order: first → last, the others as waypoints.
+ * Only the first 9 intermediate points are kept (Maps URLs limit); the extra ones are dropped silently.
+ * `travelmode` is set only when all the known modes map to the same one and it is not transit
+ * (Google does not support waypoints with transit). Undefined with fewer than 2 known points.
+ */
+export function dayRouteUrl(points: MapPoint[], modes: (Travel['mode'] | undefined)[]): string | undefined {
+  const known = points.filter((point) => hasCoords(point) || point.name)
+  if (known.length < 2) return undefined
+  const origin = known[0]
+  const destination = known[known.length - 1]
+  const waypoints = known.slice(1, -1).slice(0, maxWaypoints)
+  const params = new URLSearchParams({ api: '1', origin: query(origin), destination: query(destination) })
+  if (origin.googlePlaceId) params.set('origin_place_id', origin.googlePlaceId)
+  if (destination.googlePlaceId) params.set('destination_place_id', destination.googlePlaceId)
+  if (waypoints.length > 0) {
+    params.set('waypoints', waypoints.map(query).join('|'))
+    // the place ids must match the waypoints one by one
+    if (waypoints.every((point) => point.googlePlaceId)) {
+      params.set('waypoint_place_ids', waypoints.map((point) => point.googlePlaceId).join('|'))
+    }
+  }
+  const used = new Set(modes.filter((mode) => mode !== undefined).map((mode) => travelModes[mode]))
+  const [travelmode] = used
+  if (used.size === 1 && travelmode && travelmode !== 'transit') params.set('travelmode', travelmode)
+  return `https://www.google.com/maps/dir/?${params}`
+}

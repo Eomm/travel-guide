@@ -63,6 +63,7 @@ export const en: Messages = {
   'itinerary.days': 'Trip days',
   'itinerary.dayNumber': 'Day {n}',
   'itinerary.dayNotFound': 'The day {date} is not in the plan.',
+  'itinerary.openDayInMaps': 'Open the day in Google Maps',
   'itinerary.dayNav': 'Previous and next day',
   'itinerary.previousDay': 'Previous day',
   'itinerary.nextDay': 'Next day',

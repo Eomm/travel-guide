@@ -17,6 +17,30 @@
   display: block;
 }
 
+.route {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--tap-size);
+  margin-top: var(--space-3);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius);
+  color: var(--color-accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.route:active {
+  background: var(--color-accent-soft);
+}
+
+.route svg {
+  width: 20px;
+  height: 20px;
+}
+
 .notes {
   margin: var(--space-2) 0 0;
   white-space: pre-line;
