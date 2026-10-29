@@ -5,6 +5,7 @@ import { BudgetIcon, ItineraryIcon, LogisticsIcon, PlacesIcon } from './icons.ts
 import styles from './TabBar.module.css'
 
 // Paths relative to the trip route (`/:slug`); see the child routes in App.tsx.
+// Only the itinerary (index) matches exactly, so Places stays active on `places/:placeId`.
 const tabs: { to: string; label: MessageKey; Icon: ComponentType }[] = [
   { to: '.', label: 'nav.itinerary', Icon: ItineraryIcon },
   { to: 'places', label: 'nav.places', Icon: PlacesIcon },
@@ -22,7 +23,7 @@ export default function TabBar() {
       <ul className={styles.tabs}>
         {tabs.map(({ to, label, Icon }) => (
           <li key={to}>
-            <NavLink to={to} end={!(to === '.' && onDay)} className={({ isActive }) => (isActive ? `${styles.tab} ${styles.active}` : styles.tab)}>
+            <NavLink to={to} end={to === '.' && !onDay} className={({ isActive }) => (isActive ? `${styles.tab} ${styles.active}` : styles.tab)}>
               <Icon />
               <span>{t(label)}</span>
             </NavLink>
