@@ -34,6 +34,22 @@ The Vite plugin `scripts/vite-plugin-trips.ts` publishes the trips as static dat
 and its errors are shown in the terminal and in the browser overlay. The app reads the data at runtime through
 `src/data/trips.ts` (`loadTripIndex`, `loadTrip`), never from the JS bundle.
 
+## UI conventions
+
+- **Routes**: `/` lists the trips; `/:slug` is `src/pages/TripLayout.tsx`, which loads the trip once (header,
+  bottom tab bar, loading/error states) and renders the pages in `src/pages/trip/` (itinerary, places, logistics,
+  budget). Inside them, `useTrip()` (`src/data/trip-context.ts`) returns `{ slug, trip }`.
+- **Styles**: design tokens (colors with a dark-mode block, spacing, radius, font sizes, shadow, layout sizes)
+  are CSS custom properties in `src/styles.css`, together with the reset and base element styles. Everything
+  else goes in a CSS module next to its component (`Foo.tsx` + `Foo.module.css`) and uses the tokens.
+  Mobile-first; tap targets at least `var(--tap-size)` (44px).
+- **i18n**: every UI string goes through `t` from `useI18n()` (`src/i18n/i18n.ts`). To add a string, add the key
+  to `src/i18n/it.ts` in its area (`<area>.<name>`) and the same key to `src/i18n/en.ts` (a missing key is a type
+  error); `{name}` placeholders are filled by `t('key', { name })`. The language is the saved choice, else the
+  browser language (it/en), else Italian.
+- **Formatting**: `src/model/format.ts` formats dates (`YYYY-MM-DD`, no timezone shifts), prices in the trip
+  currency with the rough conversion (or `<Price amount />` in `src/components/`) and durations.
+
 ## Deploy
 
 `.github/workflows/deploy.yml` deploys to GitHub Pages on every push to `main`; pull requests run the same

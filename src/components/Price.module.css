@@ -1,0 +1,8 @@
+.price {
+  white-space: nowrap;
+}
+
+.converted {
+  color: var(--color-muted);
+  font-size: var(--font-size-sm);
+}

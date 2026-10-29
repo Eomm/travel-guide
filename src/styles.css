@@ -1,12 +1,49 @@
+/* Global styles: design tokens, reset and base elements only. Component styles go in `*.module.css`. */
+
 :root {
-  --color-bg: #ffffff;
+  /* colors */
+  --color-bg: #f6f7f9;
+  --color-surface: #ffffff;
   --color-text: #1a1a1a;
   --color-muted: #5f6368;
   --color-accent: #0b63ce;
-  --color-border: #e0e0e0;
+  --color-accent-soft: #e6effb;
+  --color-border: #e0e3e7;
+  --color-success: #1e7d32;
+  --color-warning: #a35c00;
+  --color-danger: #c62828;
+
+  /* spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+
+  /* shape */
+  --radius-sm: 8px;
+  --radius: 12px;
+  --shadow: 0 1px 2px rgb(0 0 0 / 6%), 0 1px 3px rgb(0 0 0 / 8%);
+
+  /* type */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.375rem;
+  --font-size-2xl: 1.625rem;
+
+  /* layout */
+  --container-max: 720px;
+  --gutter: 16px;
+  --tap-size: 44px;
+  --header-height: 56px;
+  --tabbar-height: 60px;
 
   color-scheme: light dark;
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: var(--font-size-base);
   line-height: 1.5;
   -webkit-text-size-adjust: 100%;
 }
@@ -14,10 +51,16 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --color-bg: #121212;
+    --color-surface: #1e1e1e;
     --color-text: #e8e8e8;
     --color-muted: #a0a0a0;
     --color-accent: #6aa9ff;
-    --color-border: #2c2c2c;
+    --color-accent-soft: #1d2a3b;
+    --color-border: #2f2f2f;
+    --color-success: #66bb6a;
+    --color-warning: #ffb74d;
+    --color-danger: #ef5350;
+    --shadow: none;
   }
 }
 
@@ -29,30 +72,32 @@
 
 body {
   margin: 0;
+  overflow-x: hidden;
   background: var(--color-bg);
   color: var(--color-text);
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1 {
+  margin: var(--space-4) 0;
+  font-size: var(--font-size-2xl);
+  line-height: 1.2;
+}
+
+h2 {
+  font-size: var(--font-size-xl);
+  line-height: 1.25;
 }
 
 a {
   color: var(--color-accent);
 }
 
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 0 16px;
+img {
+  max-width: 100%;
 }
 
-.muted {
-  color: var(--color-muted);
-}
-
-.trip-list {
-  padding: 0;
-  list-style: none;
-}
-
-.trip-list li {
-  padding: 12px 0;
-  border-bottom: 1px solid var(--color-border);
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
