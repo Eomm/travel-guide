@@ -18,9 +18,11 @@ interface Props {
   id?: string
   /** Briefly highlighted after a tap on its map marker. */
   highlighted?: boolean
+  /** Position in the day, the same number as its map marker. */
+  number?: number
 }
 
-export default function StopCard({ stop, point, id, highlighted }: Props) {
+export default function StopCard({ stop, point, id, highlighted, number }: Props) {
   const { slug, trip } = useTrip()
   const { lang, t } = useI18n()
   const place = trip.places.find((p) => p.id === stop.placeId)
@@ -29,8 +31,9 @@ export default function StopCard({ stop, point, id, highlighted }: Props) {
   const maps = placeUrl(point)
   return (
     <article id={id} className={highlighted ? `${styles.card} ${styles.highlighted}` : styles.card}>
-      {(stop.time || reservation) && (
+      {(number !== undefined || stop.time || reservation) && (
         <p className={styles.top}>
+          {number !== undefined && <span className={styles.number}>{number}</span>}
           {stop.time && <span className={styles.time}>{stop.time}</span>}
           {reservation && <span className={styles.badge}>{t('itinerary.booked')}</span>}
         </p>

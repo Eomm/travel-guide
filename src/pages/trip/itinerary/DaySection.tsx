@@ -136,7 +136,7 @@ export default function DaySection({ day }: { day: Day }) {
           {legs.map((leg, i) => (
             <li key={leg.stop.id ?? i}>
               <TravelLeg leg={leg} />
-              <StopCard stop={leg.stop} point={leg.to} id={stopElementId(leg.stop, i)}
+              <StopCard stop={leg.stop} point={leg.to} id={stopElementId(leg.stop, i)} number={i + 1}
                 highlighted={highlighted === stopElementId(leg.stop, i)} />
             </li>
           ))}
