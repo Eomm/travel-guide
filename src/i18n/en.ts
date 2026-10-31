@@ -67,6 +67,10 @@ export const en: Messages = {
   'itinerary.dayNav': 'Previous and next day',
   'itinerary.previousDay': 'Previous day',
   'itinerary.nextDay': 'Next day',
+  'itinerary.map': 'Map of the day',
+  'itinerary.showMap': 'Show map',
+  'itinerary.hideMap': 'Hide map',
+  'itinerary.mapUnavailable': 'Map not available right now.',
 
   // places
   'places.title': 'Places',

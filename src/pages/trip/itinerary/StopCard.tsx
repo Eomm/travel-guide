@@ -11,7 +11,16 @@ import type { Stop } from '../../../model/trip.gen.ts'
 import { categoryText } from './labels.ts'
 import styles from './StopCard.module.css'
 
-export default function StopCard({ stop, point }: { stop: Stop; point: Point }) {
+interface Props {
+  stop: Stop
+  point: Point
+  /** Element id, the target of the map markers. */
+  id?: string
+  /** Briefly highlighted after a tap on its map marker. */
+  highlighted?: boolean
+}
+
+export default function StopCard({ stop, point, id, highlighted }: Props) {
   const { slug, trip } = useTrip()
   const { lang, t } = useI18n()
   const place = trip.places.find((p) => p.id === stop.placeId)
@@ -19,7 +28,7 @@ export default function StopCard({ stop, point }: { stop: Stop; point: Point }) 
   const cost = stopCost(stop, trip)
   const maps = placeUrl(point)
   return (
-    <article className={styles.card}>
+    <article id={id} className={highlighted ? `${styles.card} ${styles.highlighted}` : styles.card}>
       {(stop.time || reservation) && (
         <p className={styles.top}>
           {stop.time && <span className={styles.time}>{stop.time}</span>}

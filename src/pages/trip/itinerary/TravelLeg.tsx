@@ -9,6 +9,7 @@ import { directionsUrl } from '../../../model/maps.ts'
 import type { Leg } from '../../../model/points.ts'
 import type { Travel } from '../../../model/trip.gen.ts'
 import { kmText } from './labels.ts'
+import { legDistance, useRouteDistances } from './route-distances.ts'
 import styles from './TravelLeg.module.css'
 
 const modeIcons: Record<Travel['mode'], ComponentType> = {
@@ -28,7 +29,9 @@ const modeIcons: Record<Travel['mode'], ComponentType> = {
 /** Connector row before a stop: how to get there from the previous point. */
 export default function TravelLeg({ leg }: { leg: Leg }) {
   const { lang, t } = useI18n()
-  const { travel, from, to, distance } = leg
+  const { km } = useRouteDistances()
+  const { travel, from, to } = leg
+  const distance = legDistance(leg, km)
   const directions = from && directionsUrl(from, to, travel?.mode)
   if (!travel && !directions) return null
   const Icon = modeIcons[travel?.mode ?? 'other']

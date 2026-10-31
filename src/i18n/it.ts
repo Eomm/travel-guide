@@ -66,6 +66,10 @@ export const it = {
   'itinerary.dayNav': 'Giorno precedente e successivo',
   'itinerary.previousDay': 'Giorno prima',
   'itinerary.nextDay': 'Giorno dopo',
+  'itinerary.map': 'Mappa del giorno',
+  'itinerary.showMap': 'Mostra mappa',
+  'itinerary.hideMap': 'Nascondi mappa',
+  'itinerary.mapUnavailable': 'Mappa non disponibile al momento.',
 
   // places
   'places.title': 'Luoghi',
