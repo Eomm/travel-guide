@@ -103,3 +103,9 @@ export const RouteIcon = () => (
     <path d="M8 19h8.5a3.5 3.5 0 0 0 0-7h-9a3.5 3.5 0 0 1 0-7H16" />
   </Icon>
 )
+
+export const FlagIcon = () => (
+  <Icon>
+    <path d="M5 21V4M5 4h12l-2.5 4.5L17 13H5" />
+  </Icon>
+)

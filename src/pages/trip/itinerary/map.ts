@@ -1,6 +1,6 @@
 // Embedded day map: configuration and real routes for walk / drive / bike legs (Maps JS Routes library).
 // Google has no transit data in Japan, so the other modes are drawn as straight lines.
-import type { Leg, Point } from '../../../model/points.ts'
+import type { Point, Segment } from '../../../model/points.ts'
 import type { Travel } from '../../../model/trip.gen.ts'
 
 /** Without a key (e.g. a fork's PR build) there is no map at all. */
@@ -40,7 +40,7 @@ export interface RouteRequest {
 }
 
 /** The route to request for a leg; undefined when it is drawn as a straight line (mode or coordinates). */
-export function routeRequest(leg: Leg): RouteRequest | undefined {
+export function routeRequest(leg: Segment): RouteRequest | undefined {
   const mode = leg.travel && routedModes[leg.travel.mode]
   const from = coords(leg.from)
   const to = coords(leg.to)

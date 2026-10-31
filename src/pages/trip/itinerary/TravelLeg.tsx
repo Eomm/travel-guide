@@ -6,7 +6,7 @@ import {
 import { useI18n } from '../../../i18n/i18n.ts'
 import { formatDuration } from '../../../model/format.ts'
 import { directionsUrl } from '../../../model/maps.ts'
-import type { Leg } from '../../../model/points.ts'
+import type { Segment } from '../../../model/points.ts'
 import type { Travel } from '../../../model/trip.gen.ts'
 import { kmText } from './labels.ts'
 import { legDistance, useRouteDistances } from './route-distances.ts'
@@ -26,8 +26,8 @@ const modeIcons: Record<Travel['mode'], ComponentType> = {
   other: RouteIcon,
 }
 
-/** Connector row before a stop: how to get there from the previous point. */
-export default function TravelLeg({ leg }: { leg: Leg }) {
+/** Connector row before a stop (or the end of the day): how to get there from the previous point. */
+export default function TravelLeg({ leg }: { leg: Segment }) {
   const { lang, t } = useI18n()
   const { km } = useRouteDistances()
   const { travel, from, to } = leg

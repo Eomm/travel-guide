@@ -70,6 +70,9 @@ export const it = {
   'itinerary.showMap': 'Mostra mappa',
   'itinerary.hideMap': 'Nascondi mappa',
   'itinerary.mapUnavailable': 'Mappa non disponibile al momento.',
+  'itinerary.end': 'Arrivo',
+  'itinerary.endStay': 'il tuo alloggio',
+  'itinerary.endNextStart': 'partenza del giorno dopo',
 
   // places
   'places.title': 'Luoghi',

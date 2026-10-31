@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { PlacesIcon, RouteIcon } from '../../../components/icons.tsx'
+import { FlagIcon, PlacesIcon, RouteIcon } from '../../../components/icons.tsx'
 import Price from '../../../components/Price.tsx'
 import { useTrip } from '../../../data/trip-context.ts'
 import { useI18n } from '../../../i18n/i18n.ts'
@@ -7,7 +7,9 @@ import { dayCost } from '../../../model/budget.ts'
 import { formatDate } from '../../../model/format.ts'
 import { walkingKm } from '../../../model/geo.ts'
 import { dayRouteUrl, placeUrl } from '../../../model/maps.ts'
-import { dayLegs, dayStartPoint, type DayStartPoint, type Leg } from '../../../model/points.ts'
+import {
+  dayEndLeg, type DayEndPoint, dayLegs, dayStartPoint, type DayStartPoint, type Segment,
+} from '../../../model/points.ts'
 import type { Day, Stop } from '../../../model/trip.gen.ts'
 import DayMap from './DayMap.tsx'
 import styles from './DaySection.module.css'
@@ -42,7 +44,37 @@ function StartRow({ start }: { start: DayStartPoint }) {
   )
 }
 
-function DayRecap({ day, legs }: { day: Day; legs: Leg[] }) {
+function EndRow({ end }: { end: DayEndPoint }) {
+  const { t } = useI18n()
+  const { point, time, source } = end
+  const maps = placeUrl(point)
+  return (
+    <div className={styles.start}>
+      <span className={`${styles.startIcon} ${styles.endIcon}`}>
+        <FlagIcon />
+      </span>
+      <p className={styles.startText}>
+        <span className={styles.label}>
+          {t('itinerary.end')}
+          {time && ` · ${time}`}
+        </span>
+        <span>{point.name}</span>
+        {source !== 'explicit' && (
+          <span className={styles.hint}>{t(source === 'stay' ? 'itinerary.endStay' : 'itinerary.endNextStart')}</span>
+        )}
+      </p>
+      {maps && (
+        <a className={styles.link} href={maps} target="_blank" rel="noreferrer"
+          aria-label={t('itinerary.mapsOf', { name: point.name })}>
+          {t('itinerary.maps')}
+        </a>
+      )}
+    </div>
+  )
+}
+
+/** `legs`: the legs to the stops and to the end of the day (walking km). */
+function DayRecap({ day, legs }: { day: Day; legs: Segment[] }) {
   const { trip } = useTrip()
   const { lang, t } = useI18n()
   const { km } = useRouteDistances()
@@ -98,19 +130,21 @@ function useStopHighlight() {
   return { highlighted, select }
 }
 
-/** One day: heading, route link, map, start point, stops with the travel legs between them, recap. */
+/** One day: heading, route link, map, start point, stops with the travel legs between them, end point, recap. */
 export default function DaySection({ day }: { day: Day }) {
   const { trip } = useTrip()
   const { lang, t } = useI18n()
   const start = dayStartPoint(day, trip)
   const legs = dayLegs(day, trip)
+  const endLeg = dayEndLeg(day, trip)
   const date = formatDate(day.date, lang, 'long')
   const routeKm = useRouteKm()
   const { highlighted, select } = useStopHighlight()
-  // the first stop is the origin when there is no start: its travel is not part of the route
+  // the first point is the origin: the travel to reach it is not part of the route
+  const segments: Segment[] = endLeg ? [...legs, endLeg] : legs
   const route = dayRouteUrl(
-    [...(start ? [start.point] : []), ...legs.map((leg) => leg.to)],
-    legs.filter((leg) => leg.from).map((leg) => leg.travel?.mode),
+    [...(start ? [start.point] : []), ...segments.map((leg) => leg.to)],
+    segments.filter((leg) => leg.from).map((leg) => leg.travel?.mode),
   )
   return (
     <RouteDistancesContext value={routeKm}>
@@ -125,7 +159,7 @@ export default function DaySection({ day }: { day: Day }) {
             {t('itinerary.openDayInMaps')}
           </a>
         )}
-        <DayMap start={start?.point} legs={legs} onSelectStop={(i) => select(stopElementId(legs[i].stop, i))} />
+        <DayMap start={start?.point} legs={legs} endLeg={endLeg} onSelectStop={(i) => select(stopElementId(legs[i].stop, i))} />
         {day.notes && <p className={styles.notes}>{day.notes}</p>}
         <ol className={styles.timeline} aria-label={t('itinerary.stopsOf', { date })}>
           {start && (
@@ -140,8 +174,14 @@ export default function DaySection({ day }: { day: Day }) {
                 highlighted={highlighted === stopElementId(leg.stop, i)} />
             </li>
           ))}
+          {endLeg && (
+            <li>
+              <TravelLeg leg={endLeg} />
+              <EndRow end={endLeg.end} />
+            </li>
+          )}
         </ol>
-        <DayRecap day={day} legs={legs} />
+        <DayRecap day={day} legs={segments} />
       </section>
     </RouteDistancesContext>
   )

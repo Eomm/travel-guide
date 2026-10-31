@@ -3,9 +3,9 @@ import {
   useApiLoadingStatus, useMap, useMapsLibrary,
 } from '@vis.gl/react-google-maps'
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
-import { PlacesIcon } from '../../../components/icons.tsx'
+import { FlagIcon, PlacesIcon } from '../../../components/icons.tsx'
 import { useI18n } from '../../../i18n/i18n.ts'
-import type { Leg, Point } from '../../../model/points.ts'
+import type { EndLeg, Leg, Point, Segment } from '../../../model/points.ts'
 import styles from './DayMap.module.css'
 import { cachedRoute, coords, type LatLng, loadRoute, mapId, mapsKey, routeRequest, strokeColors } from './map.ts'
 import { useRouteDistances } from './route-distances.ts'
@@ -13,6 +13,8 @@ import { useRouteDistances } from './route-distances.ts'
 interface Props {
   start?: Point
   legs: Leg[]
+  /** The leg to the end of the day, if any. */
+  endLeg?: EndLeg
   /** A stop marker was tapped: index of the stop in the day. */
   onSelectStop: (index: number) => void
 }
@@ -77,7 +79,7 @@ const dashed: Pick<google.maps.PolylineOptions, 'strokeOpacity' | 'icons'> = {
 }
 
 /** One leg: the real route for walk / drive / bike, else (or while loading, or on error) a dashed straight line. */
-function LegLine({ leg }: { leg: Leg }) {
+function LegLine({ leg }: { leg: Segment }) {
   const library = useMapsLibrary('routes')
   const { report } = useRouteDistances()
   const request = routeRequest(leg)
@@ -104,11 +106,16 @@ function LegLine({ leg }: { leg: Leg }) {
   return from && to ? <Polyline path={[from, to]} {...dashed} /> : null
 }
 
-function MapContent({ start, legs, onSelectStop }: Props) {
+const samePosition = (a?: LatLng, b?: LatLng) => a !== undefined && b !== undefined && a.lat === b.lat && a.lng === b.lng
+
+function MapContent({ start, legs, endLeg, onSelectStop }: Props) {
   const { t } = useI18n()
   const status = useApiLoadingStatus()
   const startPosition = coords(start)
-  const positions = [startPosition, ...legs.map((leg) => coords(leg.to))].filter((p) => p !== undefined)
+  const endPosition = coords(endLeg?.to)
+  const positions = [startPosition, ...legs.map((leg) => coords(leg.to)), endPosition].filter((p) => p !== undefined)
+  // a day that ends where it starts (e.g. the hotel) gets one marker
+  const endMarker = endLeg && endPosition && !samePosition(startPosition, endPosition)
 
   if (status === APILoadingStatus.FAILED || status === APILoadingStatus.AUTH_FAILURE) {
     return <p className={styles.note}>{t('itinerary.mapUnavailable')}</p>
@@ -120,6 +127,7 @@ function MapContent({ start, legs, onSelectStop }: Props) {
       {legs.map((leg, i) => (
         <LegLine key={`${leg.stop.id ?? i}:${routeRequest(leg)?.key}`} leg={leg} />
       ))}
+      {endLeg && <LegLine key={`end:${routeRequest(endLeg)?.key}`} leg={endLeg} />}
       {start && startPosition && (
         <AdvancedMarker position={startPosition} title={start.name}>
           <span className={`${styles.marker} ${styles.startMarker}`}>
@@ -136,16 +144,23 @@ function MapContent({ start, legs, onSelectStop }: Props) {
           </AdvancedMarker>
         )
       })}
+      {endMarker && (
+        <AdvancedMarker position={endPosition} title={endLeg.to.name}>
+          <span className={`${styles.marker} ${styles.endMarker}`}>
+            <FlagIcon />
+          </span>
+        </AdvancedMarker>
+      )}
     </Map>
   )
 }
 
-/** Map of the day: start + numbered stops, legs as routes or dashed lines. Renders nothing without an API key. */
+/** Map of the day: start, numbered stops and end, legs as routes or dashed lines. Renders nothing without an API key. */
 export default function DayMap(props: Props) {
   const { t } = useI18n()
   const online = useOnline()
   const [hidden, setHidden] = useState(savedHidden)
-  const hasPoints = coords(props.start) !== undefined || props.legs.some((leg) => coords(leg.to))
+  const hasPoints = [props.start, ...props.legs.map((leg) => leg.to), props.endLeg?.to].some((p) => coords(p))
   if (!mapsKey || !hasPoints) return null
 
   const toggle = () => {

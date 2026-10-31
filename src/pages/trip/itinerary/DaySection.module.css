@@ -75,6 +75,12 @@
   height: 18px;
 }
 
+.endIcon {
+  border: 2px solid var(--color-accent);
+  background: var(--color-surface);
+  color: var(--color-accent);
+}
+
 .startText {
   display: flex;
   flex: 1;
@@ -88,6 +94,11 @@
   font-size: var(--font-size-xs);
   font-weight: 600;
   text-transform: uppercase;
+}
+
+.hint {
+  color: var(--color-muted);
+  font-size: var(--font-size-sm);
 }
 
 .link {

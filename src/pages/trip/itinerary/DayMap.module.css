@@ -76,3 +76,14 @@
   width: 16px;
   height: 16px;
 }
+
+.endMarker {
+  border-color: var(--color-accent);
+  background: var(--color-surface);
+  color: var(--color-accent);
+}
+
+.endMarker svg {
+  width: 16px;
+  height: 16px;
+}
