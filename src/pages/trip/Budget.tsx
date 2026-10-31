@@ -4,13 +4,9 @@ import { useTrip } from '../../data/trip-context.ts'
 import { useI18n, type Lang, type MessageKey } from '../../i18n/i18n.ts'
 import { dayCost, missingPrices, tripCost } from '../../model/budget.ts'
 import { countDays, formatDate, formatPrice, locale } from '../../model/format.ts'
-import type { Stop, Trip } from '../../model/trip.gen.ts'
+import type { Trip } from '../../model/trip.gen.ts'
 import Bar from './budget/Bar.tsx'
 import styles from './Budget.module.css'
-
-/** The place name, or the title of a free stop. */
-const stopName = (stop: Stop, trip: Trip) =>
-  trip.places.find((place) => place.id === stop.placeId)?.name ?? stop.title ?? ''
 
 const formatPercent = (ratio: number, lang: Lang) =>
   new Intl.NumberFormat(locale(lang), { style: 'percent', maximumFractionDigits: 0 }).format(ratio)
@@ -108,17 +104,13 @@ function MissingPrices() {
     <details className={styles.missing}>
       <summary className={styles.summary}>{t(count === 1 ? 'budget.missing.one' : 'budget.missing.other', { count })}</summary>
       <ul className={styles.missingList}>
-        {missing.map(({ date, stop, leg }, i) => {
-          const name = stopName(stop, trip)
-          const mode = stop.travel ? t(`budget.mode.${stop.travel.mode}`) : ''
-          return (
-            <li key={i} className={styles.missingItem}>
-              <span className={styles.date}>{formatDate(date, lang, 'short')}</span>
-              {stop.time && <span className={styles.time}>{stop.time}</span>}
-              <span>{leg ? t('budget.missingLeg', { mode, name }) : name}</span>
-            </li>
-          )
-        })}
+        {missing.map(({ date, time, name, leg }, i) => (
+          <li key={i} className={styles.missingItem}>
+            <span className={styles.date}>{formatDate(date, lang, 'short')}</span>
+            {time && <span className={styles.time}>{time}</span>}
+            <span>{leg ? t('budget.missingLeg', { mode: t(`budget.mode.${leg}`), name }) : name}</span>
+          </li>
+        ))}
       </ul>
     </details>
   )

@@ -1,5 +1,6 @@
 // Budget rules from schema/README.md ("Budget rules"). All amounts are in trip.currency.
-import type { Day, Stop, Trip } from './trip.gen.ts'
+import { dayEndPoint, stopPoint } from './points.ts'
+import type { Day, Stop, Travel, Trip } from './trip.gen.ts'
 
 /** Price of the booked reservation, else the stop price, else the place price; undefined when unknown. */
 export function stopCost(stop: Stop, trip: Trip): number | undefined {
@@ -47,21 +48,30 @@ export function tripCost(trip: Trip): TripCost {
 
 export interface MissingPrice {
   date: string
-  stop: Stop
-  /** true: the travel leg to reach `stop` has no price; false: the stop cost is unknown. */
-  leg: boolean
+  time?: string
+  /** The stop, or the end of the day. */
+  name: string
+  /** Set when the travel leg to reach `name` has no price; undefined when the stop cost is unknown. */
+  leg?: Travel['mode']
 }
 
-/** Unknown costs, so the total is a lower bound: stops without a cost and non-walk legs without a price. */
+/** A non-walk leg without a price. */
+const unpricedLeg = (travel?: Travel) => travel && travel.mode !== 'walk' && travel.price === undefined
+
+/** Unknown costs, so the total is a lower bound: stops without a cost and non-walk legs (end of day too) without a price. */
 export function missingPrices(trip: Trip): MissingPrice[] {
-  return trip.days.flatMap((day) =>
-    day.stops.flatMap((stop) => {
-      const missing: MissingPrice[] = []
-      if (stop.travel && stop.travel.mode !== 'walk' && stop.travel.price === undefined) {
-        missing.push({ date: day.date, stop, leg: true })
-      }
-      if (stopCost(stop, trip) === undefined) missing.push({ date: day.date, stop, leg: false })
-      return missing
-    }),
-  )
+  return trip.days.flatMap((day) => {
+    const missing = day.stops.flatMap((stop) => {
+      const item = { date: day.date, time: stop.time, name: stopPoint(stop, trip).name }
+      const found: MissingPrice[] = []
+      if (unpricedLeg(stop.travel)) found.push({ ...item, leg: stop.travel?.mode })
+      if (stopCost(stop, trip) === undefined) found.push(item)
+      return found
+    })
+    if (unpricedLeg(day.end?.travel)) {
+      const name = dayEndPoint(day, trip)?.point.name ?? ''
+      missing.push({ date: day.date, time: day.end?.time, name, leg: day.end?.travel?.mode })
+    }
+    return missing
+  })
 }
