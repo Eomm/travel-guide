@@ -1,5 +1,6 @@
 import { Link } from 'react-router'
 import LanguageSwitch from '../components/LanguageSwitch.tsx'
+import ThemeToggle from '../components/ThemeToggle.tsx'
 import { loadTripIndex, resolveResource } from '../data/trips.ts'
 import { useAsync } from '../data/useAsync.ts'
 import { useI18n } from '../i18n/i18n.ts'
@@ -31,7 +32,10 @@ export default function Home() {
     <div className={styles.page}>
       <header className={styles.header}>
         <h1>{t('home.title')}</h1>
-        <LanguageSwitch />
+        <div className={styles.actions}>
+          <ThemeToggle />
+          <LanguageSwitch />
+        </div>
       </header>
       {index.status === 'loading' && <p className={styles.status}>{t('common.loading')}</p>}
       {index.status === 'error' && (

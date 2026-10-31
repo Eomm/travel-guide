@@ -15,6 +15,10 @@ export const en: Messages = {
   'category.hotel': 'Stay',
   'category.info': 'Info',
 
+  // theme
+  'theme.switchToLight': 'Switch to the light theme',
+  'theme.switchToDark': 'Switch to the dark theme',
+
   // nav
   'nav.allTrips': 'All trips',
   'nav.tabs': 'Trip sections',

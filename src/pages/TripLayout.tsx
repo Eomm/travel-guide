@@ -3,6 +3,7 @@ import { Link, Outlet, useParams } from 'react-router'
 import { BackIcon } from '../components/icons.tsx'
 import LanguageSwitch from '../components/LanguageSwitch.tsx'
 import TabBar from '../components/TabBar.tsx'
+import ThemeToggle from '../components/ThemeToggle.tsx'
 import { TripContext } from '../data/trip-context.ts'
 import { loadTrip, NotFoundError } from '../data/trips.ts'
 import { useAsync } from '../data/useAsync.ts'
@@ -21,7 +22,10 @@ export default function TripLayout() {
             <BackIcon />
           </Link>
           <span className={styles.title}>{state.status === 'success' ? state.data.trip.title : ''}</span>
-          <LanguageSwitch />
+          <div className={styles.actions}>
+            <ThemeToggle />
+            <LanguageSwitch />
+          </div>
         </div>
       </header>
       <main className={state.status === 'success' ? `${styles.main} ${styles.withTabs}` : styles.main}>

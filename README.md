@@ -43,6 +43,10 @@ and its errors are shown in the terminal and in the browser overlay. The app rea
   are CSS custom properties in `src/styles.css`, together with the reset and base element styles. Everything
   else goes in a CSS module next to its component (`Foo.tsx` + `Foo.module.css`) and uses the tokens.
   Mobile-first; tap targets at least `var(--tap-size)` (44px).
+- **Theme**: the app follows the OS theme (light/dark) until the user picks one with the button in the header;
+  the choice is saved in `localStorage` (`travel-guide.theme`) and applied before the first paint (`index.html`).
+  The state lives in `src/theme/` (`useTheme()`), the tokens in `src/styles.css` (`:root` and
+  `:root[data-theme='dark']`).
 - **i18n**: every UI string goes through `t` from `useI18n()` (`src/i18n/i18n.ts`). To add a string, add the key
   to `src/i18n/it.ts` in its area (`<area>.<name>`) and the same key to `src/i18n/en.ts` (a missing key is a type
   error); `{name}` placeholders are filled by `t('key', { name })`. The language is the saved choice, else the

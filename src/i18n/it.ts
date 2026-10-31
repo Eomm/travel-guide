@@ -14,6 +14,10 @@ export const it = {
   'category.hotel': 'Alloggio',
   'category.info': 'Info',
 
+  // theme
+  'theme.switchToLight': 'Passa al tema chiaro',
+  'theme.switchToDark': 'Passa al tema scuro',
+
   // nav
   'nav.allTrips': 'Tutti i viaggi',
   'nav.tabs': 'Sezioni del viaggio',

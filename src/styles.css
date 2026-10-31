@@ -1,7 +1,7 @@
 /* Global styles: design tokens, reset and base elements only. Component styles go in `*.module.css`. */
 
 :root {
-  /* colors */
+  /* colors: the light theme, overridden below by the dark one */
   --color-bg: #f6f7f9;
   --color-surface: #ffffff;
   --color-text: #1a1a1a;
@@ -41,27 +41,28 @@
   --header-height: 56px;
   --tabbar-height: 60px;
 
-  color-scheme: light dark;
+  color-scheme: light;
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   font-size: var(--font-size-base);
   line-height: 1.5;
   -webkit-text-size-adjust: 100%;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: #121212;
-    --color-surface: #1e1e1e;
-    --color-text: #e8e8e8;
-    --color-muted: #a0a0a0;
-    --color-accent: #6aa9ff;
-    --color-accent-soft: #1d2a3b;
-    --color-border: #2f2f2f;
-    --color-success: #66bb6a;
-    --color-warning: #ffb74d;
-    --color-danger: #ef5350;
-    --shadow: none;
-  }
+/* the dark theme: the app sets `data-theme` on <html> (src/theme/), before the first paint */
+:root[data-theme='dark'] {
+  --color-bg: #121212;
+  --color-surface: #1e1e1e;
+  --color-text: #e8e8e8;
+  --color-muted: #a0a0a0;
+  --color-accent: #6aa9ff;
+  --color-accent-soft: #1d2a3b;
+  --color-border: #2f2f2f;
+  --color-success: #66bb6a;
+  --color-warning: #ffb74d;
+  --color-danger: #ef5350;
+  --shadow: none;
+
+  color-scheme: dark;
 }
 
 *,
