@@ -142,7 +142,7 @@ export default function PlaceDetail() {
       {place.image && <img className={styles.hero} src={resolveResource(slug, place.image)} alt="" />}
       <h1 className={styles.name}>{place.name}</h1>
       <div className={styles.meta}>
-        {place.category && <span>{categoryLabel(place.category)}</span>}
+        {place.category && <span>{categoryLabel(place.category, t)}</span>}
         {place.stars !== undefined && <Stars count={place.stars} />}
         <PlaceBadges place={place} />
       </div>

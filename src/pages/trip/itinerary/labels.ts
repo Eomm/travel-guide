@@ -1,5 +1,5 @@
 // Small text helpers shared by the itinerary components.
-import type { I18n, Lang, MessageKey } from '../../../i18n/i18n.ts'
+import type { I18n, Lang } from '../../../i18n/i18n.ts'
 import { locale } from '../../../model/format.ts'
 import type { LegDistance } from '../../../model/geo.ts'
 
@@ -9,8 +9,3 @@ export function kmText(distance: LegDistance, lang: Lang, t: I18n['t']): string 
   return t(distance.estimated ? 'itinerary.kmEstimated' : 'itinerary.km', { km })
 }
 
-const categories = ['see', 'food', 'shop', 'fun', 'hotel', 'info']
-
-/** Translated place category; unknown (free) categories are shown as they are. */
-export const categoryText = (category: string, t: I18n['t']) =>
-  categories.includes(category) ? t(`itinerary.category.${category}` as MessageKey) : category

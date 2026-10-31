@@ -44,7 +44,7 @@ function PlaceCard({ place, uses }: { place: Place; uses: PlaceUse[] }) {
       <span className={styles.body}>
         <span className={styles.name}>{place.name}</span>
         <span className={styles.meta}>
-          {place.category && <span>{categoryLabel(place.category)}</span>}
+          {place.category && <span>{categoryLabel(place.category, t)}</span>}
           {place.stars !== undefined && <Stars count={place.stars} />}
           <PlaceBadges place={place} />
         </span>
@@ -123,7 +123,7 @@ export default function Places() {
                     aria-pressed={filters.categories.includes(category)}
                     onClick={() => toggleCategory(category)}
                   >
-                    {categoryLabel(category)}
+                    {categoryLabel(category, t)}
                   </button>
                 ))}
               </div>

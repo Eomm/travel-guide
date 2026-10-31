@@ -6,6 +6,14 @@ export const it = {
   'common.comingSoon': 'In arrivo.',
   'common.language': 'Lingua',
 
+  // place categories (free strings: only these are translated)
+  'category.see': 'Da vedere',
+  'category.food': 'Cibo',
+  'category.shop': 'Shopping',
+  'category.fun': 'Divertimento',
+  'category.hotel': 'Alloggio',
+  'category.info': 'Info',
+
   // nav
   'nav.allTrips': 'Tutti i viaggi',
   'nav.tabs': 'Sezioni del viaggio',
@@ -53,12 +61,6 @@ export const it = {
   'itinerary.mode.bike': 'Bici',
   'itinerary.mode.flight': 'Volo',
   'itinerary.mode.other': 'Spostamento',
-  'itinerary.category.see': 'Da vedere',
-  'itinerary.category.food': 'Cibo',
-  'itinerary.category.shop': 'Shopping',
-  'itinerary.category.fun': 'Divertimento',
-  'itinerary.category.hotel': 'Alloggio',
-  'itinerary.category.info': 'Info',
   'itinerary.days': 'Giorni del viaggio',
   'itinerary.dayNumber': 'Giorno {n}',
   'itinerary.dayNotFound': 'Il giorno {date} non è nel programma.',

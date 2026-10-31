@@ -7,6 +7,14 @@ export const en: Messages = {
   'common.comingSoon': 'Coming soon.',
   'common.language': 'Language',
 
+  // place categories (free strings: only these are translated)
+  'category.see': 'Sights',
+  'category.food': 'Food',
+  'category.shop': 'Shopping',
+  'category.fun': 'Fun',
+  'category.hotel': 'Stay',
+  'category.info': 'Info',
+
   // nav
   'nav.allTrips': 'All trips',
   'nav.tabs': 'Trip sections',
@@ -54,12 +62,6 @@ export const en: Messages = {
   'itinerary.mode.bike': 'Bike',
   'itinerary.mode.flight': 'Flight',
   'itinerary.mode.other': 'Transfer',
-  'itinerary.category.see': 'Sights',
-  'itinerary.category.food': 'Food',
-  'itinerary.category.shop': 'Shopping',
-  'itinerary.category.fun': 'Fun',
-  'itinerary.category.hotel': 'Stay',
-  'itinerary.category.info': 'Info',
   'itinerary.days': 'Trip days',
   'itinerary.dayNumber': 'Day {n}',
   'itinerary.dayNotFound': 'The day {date} is not in the plan.',

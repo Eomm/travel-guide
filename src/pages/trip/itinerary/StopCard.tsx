@@ -6,9 +6,9 @@ import { useI18n } from '../../../i18n/i18n.ts'
 import { stopCost } from '../../../model/budget.ts'
 import { formatDuration } from '../../../model/format.ts'
 import { placeUrl } from '../../../model/maps.ts'
+import { categoryLabel } from '../../../model/places.ts'
 import type { Point } from '../../../model/points.ts'
 import type { Stop } from '../../../model/trip.gen.ts'
-import { categoryText } from './labels.ts'
 import styles from './StopCard.module.css'
 
 interface Props {
@@ -43,7 +43,7 @@ export default function StopCard({ stop, point, id, highlighted, number }: Props
       </h2>
       {(place?.category || place?.description) && (
         <p className={styles.description}>
-          {place.category && <span className={styles.category}>{categoryText(place.category, t)}</span>}
+          {place.category && <span className={styles.category}>{categoryLabel(place.category, t)}</span>}
           {place.description}
         </p>
       )}

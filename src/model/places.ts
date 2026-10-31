@@ -1,4 +1,5 @@
 // Places catalog helpers: where each place is used in the itinerary, search and categories.
+import type { I18n, MessageKey } from '../i18n/i18n.ts'
 import type { OpeningHours, Place, Trip } from './trip.gen.ts'
 
 export interface PlaceUse {
@@ -26,8 +27,13 @@ export function placeUses(trip: Trip): Map<string, PlaceUse[]> {
 export const normalizeText = (text: string) =>
   text.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().trim()
 
-/** Categories are free strings: shown as is, with the first letter capitalised. */
-export const categoryLabel = (category: string) => category.charAt(0).toUpperCase() + category.slice(1)
+const knownCategories = ['see', 'food', 'shop', 'fun', 'hotel', 'info']
+
+/** Categories are free strings: the known ones are translated, the others shown with the first letter capitalised. */
+export const categoryLabel = (category: string, t: I18n['t']) =>
+  knownCategories.includes(category)
+    ? t(`category.${category}` as MessageKey)
+    : category.charAt(0).toUpperCase() + category.slice(1)
 
 /** Distinct categories of the catalog, sorted. */
 export const placeCategories = (places: Place[]) =>
