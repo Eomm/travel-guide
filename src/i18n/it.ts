@@ -75,6 +75,7 @@ export const it = {
   'itinerary.end': 'Arrivo',
   'itinerary.endStay': 'il tuo alloggio',
   'itinerary.endNextStart': 'partenza del giorno dopo',
+  'itinerary.today': 'Oggi',
 
   // places
   'places.title': 'Luoghi',

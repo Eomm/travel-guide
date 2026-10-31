@@ -76,6 +76,7 @@ export const en: Messages = {
   'itinerary.end': 'Arrival',
   'itinerary.endStay': 'your accommodation',
   'itinerary.endNextStart': "next day's start",
+  'itinerary.today': 'Today',
 
   // places
   'places.title': 'Places',

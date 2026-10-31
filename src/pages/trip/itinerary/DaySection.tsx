@@ -10,6 +10,7 @@ import { dayRouteUrl, placeUrl } from '../../../model/maps.ts'
 import {
   dayEndLeg, type DayEndPoint, dayLegs, dayStartPoint, type DayStartPoint, type Segment,
 } from '../../../model/points.ts'
+import { todayIn } from '../../../model/today.ts'
 import type { Day, Stop } from '../../../model/trip.gen.ts'
 import DayMap from './DayMap.tsx'
 import styles from './DaySection.module.css'
@@ -150,7 +151,10 @@ export default function DaySection({ day }: { day: Day }) {
     <RouteDistancesContext value={routeKm}>
       <section>
         <h1 className={styles.heading}>
-          <span className={styles.date}>{date}</span>
+          <span className={styles.date}>
+            {date}
+            {day.date === todayIn(trip.trip.timezone) && <>{' '}<span className={styles.today}>{t('itinerary.today')}</span></>}
+          </span>
           {day.title && <span className={styles.title}>{day.title}</span>}
         </h1>
         {route && (

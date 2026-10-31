@@ -55,3 +55,11 @@
   font-size: var(--font-size-xs);
   opacity: 0.8;
 }
+
+/* text badge (not color only); currentColor follows the active chip */
+.today {
+  padding: 0 var(--space-1);
+  border: 1px solid currentColor;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}

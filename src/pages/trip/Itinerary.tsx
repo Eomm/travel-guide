@@ -4,19 +4,19 @@ import { BackIcon } from '../../components/icons.tsx'
 import { useTrip } from '../../data/trip-context.ts'
 import { useI18n } from '../../i18n/i18n.ts'
 import { formatDate } from '../../model/format.ts'
-import { todayIn } from '../../model/today.ts'
+import { defaultDay, todayIn } from '../../model/today.ts'
 import type { Day, Trip } from '../../model/trip.gen.ts'
 import DaySection from './itinerary/DaySection.tsx'
 import DayTabs from './itinerary/DayTabs.tsx'
 import styles from './Itinerary.module.css'
 
-/** Day to open on `/:slug`: `#day-YYYY-MM-DD` (links from the other tabs), else today if in the trip, else the first. */
+/** Day to open on `/:slug`: `#day-YYYY-MM-DD` (links from the other tabs), else `defaultDay` for today. */
 function initialDay(trip: Trip, hash: string): string {
-  const has = (date: string) => trip.days.some((day) => day.date === date)
+  const dates = trip.days.map((day) => day.date)
   const fromHash = hash.match(/^#day-(\d{4}-\d{2}-\d{2})$/)?.[1]
-  if (fromHash && has(fromHash)) return fromHash
-  const today = todayIn(trip.trip.timezone)
-  return has(today) ? today : trip.days[0].date
+  if (fromHash && dates.includes(fromHash)) return fromHash
+  const { startDate, endDate, timezone } = trip.trip
+  return defaultDay(dates, startDate, endDate, todayIn(timezone)) ?? dates[0]
 }
 
 function DayNav({ previous, next }: { previous?: Day; next?: Day }) {
