@@ -50,6 +50,30 @@ and its errors are shown in the terminal and in the browser overlay. The app rea
 - **Formatting**: `src/model/format.ts` formats dates (`YYYY-MM-DD`, no timezone shifts), prices in the trip
   currency with the rough conversion (or `<Price amount />` in `src/components/`) and durations.
 
+## Google Maps
+
+Each itinerary day shows an embedded Google map (`src/pages/trip/itinerary/DayMap.tsx`): numbered markers for the
+start and the stops, real routes for walk / drive / bike legs (Maps JavaScript API, Routes library) and dashed
+straight lines for the others (Google has no transit data in Japan). It needs two build-time variables:
+
+- `VITE_GMAPS_KEY`: a Maps JavaScript API key;
+- `VITE_GMAPS_MAP_ID`: a map ID (Advanced Markers, light/dark map); Google's `DEMO_MAP_ID` is used when unset.
+
+For local development put them in `.env.local` (git-ignored, never commit it); for the deploy add them as
+repository secrets (Settings → Secrets and variables → Actions) with the same names.
+
+The key ends up in the public JavaScript bundle, so restrict it in the Google Cloud console:
+
+- **Application restrictions**: websites, only `http://localhost:5173/*`, `http://localhost:4173/*` and the
+  GitHub Pages site (`https://<user>.github.io/*`);
+- **API restrictions**: only Maps JavaScript API and Routes API;
+- **Quotas**: set a low daily limit on both APIs (e.g. a few hundred requests a day) and a budget alert.
+
+Routes are requested once per leg and cached in `sessionStorage`, so browsing days does not repeat requests.
+Without a key (e.g. a build from a fork) there is no map at all; offline, or when the Maps script or a route
+fails (e.g. quota exceeded), the page shows a short note or falls back to straight lines, and the walking
+distances stay estimated (`≈`) unless set by hand in the trip.
+
 ## Deploy
 
 `.github/workflows/deploy.yml` deploys to GitHub Pages on every push to `main`; pull requests run the same

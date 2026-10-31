@@ -32,6 +32,9 @@ jobs:
         run: npm run build
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
+          # optional: without them the site has no embedded map (e.g. pull requests from forks)
+          VITE_GMAPS_KEY: ${{ secrets.VITE_GMAPS_KEY }}
+          VITE_GMAPS_MAP_ID: ${{ secrets.VITE_GMAPS_MAP_ID }}
       - name: SPA fallback for deep links
         run: cp dist/index.html dist/404.html
       - uses: actions/configure-pages@v6
