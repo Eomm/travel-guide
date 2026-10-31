@@ -17,10 +17,10 @@ export interface DayCost {
   total: number
 }
 
-/** Stops and travel of one day. */
+/** Stops and travel of one day, including the travel to the end of the day. */
 export function dayCost(day: Day, trip: Trip): DayCost {
   const stops = sum(day.stops.map((stop) => stopCost(stop, trip)))
-  const travel = sum(day.stops.map((stop) => stop.travel?.price))
+  const travel = sum([...day.stops.map((stop) => stop.travel?.price), day.end?.travel?.price])
   return { stops, travel, total: stops + travel }
 }
 

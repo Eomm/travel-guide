@@ -511,6 +511,63 @@
       },
       "unevaluatedProperties": false
     },
+    "dayEnd": {
+      "title": "DayEnd",
+      "description": "Where the day ends. Defaults to the accommodation of that night, else the start of the next day; the last day has no default.",
+      "type": "object",
+      "anyOf": [
+        {
+          "required": [
+            "placeId"
+          ]
+        },
+        {
+          "required": [
+            "accommodationId"
+          ]
+        },
+        {
+          "required": [
+            "title",
+            "lat",
+            "lng"
+          ]
+        }
+      ],
+      "allOf": [
+        {
+          "$ref": "#/$defs/geo"
+        }
+      ],
+      "properties": {
+        "time": {
+          "description": "Arrival time.",
+          "$ref": "#/$defs/time"
+        },
+        "placeId": {
+          "description": "Reference to places[].id.",
+          "$ref": "#/$defs/id"
+        },
+        "accommodationId": {
+          "description": "Reference to logistics.accommodations[].id.",
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "notes": {
+          "$ref": "#/$defs/text"
+        },
+        "travel": {
+          "description": "How to get from the last stop (or from the start when there are no stops) to the end.",
+          "$ref": "#/$defs/travel"
+        }
+      },
+      "unevaluatedProperties": false
+    },
     "stop": {
       "title": "Stop",
       "type": "object",
@@ -596,6 +653,9 @@
           "items": {
             "$ref": "#/$defs/stop"
           }
+        },
+        "end": {
+          "$ref": "#/$defs/dayEnd"
         }
       },
       "patternProperties": {

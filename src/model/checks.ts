@@ -1,7 +1,7 @@
 // Semantic checks that JSON Schema can't express (schema/README.md, "Checks done by the build").
 // Pure TypeScript: runs in Node (check:trips) and in the browser (edit mode).
 // Rule 6 (relative files exist) needs the file system and lives in scripts/load-trips.ts.
-import type { Accommodation, Day, OpeningHours, Place, Trip } from './trip.gen.ts'
+import type { Accommodation, DayEnd, DayStart, OpeningHours, Place, Trip } from './trip.gen.ts'
 import { formatPath, type Issue } from './issues.ts'
 
 export interface CheckResult {
@@ -48,6 +48,8 @@ export function checkTrip(trip: Trip): CheckResult {
   trip.days.forEach((day, d) => {
     checkRef(day.start?.placeId, places, ['days', d, 'start', 'placeId'], 'place')
     checkRef(day.start?.accommodationId, accommodationsById, ['days', d, 'start', 'accommodationId'], 'accommodation')
+    checkRef(day.end?.placeId, places, ['days', d, 'end', 'placeId'], 'place')
+    checkRef(day.end?.accommodationId, accommodationsById, ['days', d, 'end', 'accommodationId'], 'accommodation')
   })
   for (const { stop, path } of stops) {
     checkRef(stop.placeId, places, [...path, 'placeId'], 'place')
@@ -83,7 +85,8 @@ export function checkTrip(trip: Trip): CheckResult {
     if (day.date < startDate || day.date > endDate) error(path, `must be within the trip dates ${startDate}..${endDate}`)
   })
 
-  // 5. Stop times ascending within a day (equal times are allowed; stops without time are skipped).
+  // 5. Stop times ascending within a day (equal times are allowed; stops without time are skipped),
+  // and the end time not before the last stop time.
   trip.days.forEach((day, d) => {
     let previous: string | undefined
     day.stops.forEach((stop, s) => {
@@ -93,6 +96,9 @@ export function checkTrip(trip: Trip): CheckResult {
       }
       previous = stop.time
     })
+    if (day.end?.time !== undefined && previous !== undefined && day.end.time < previous) {
+      error(['days', d, 'end', 'time'], `must not be before the last stop (${previous})`)
+    }
   })
 
   // Warnings: opening hours, place status, coordinates.
@@ -107,8 +113,11 @@ export function checkTrip(trip: Trip): CheckResult {
     if (!hasCoords(place)) warn(path, 'no coordinates: the stop can not be shown on the map')
   }
   trip.days.forEach((day, d) => {
-    if (day.start && !startCoords(day, places, accommodationsById)) {
+    if (day.start && !pointCoords(day.start, places, accommodationsById)) {
       warn(['days', d, 'start'], 'no coordinates: the start can not be shown on the map')
+    }
+    if (day.end && !pointCoords(day.end, places, accommodationsById)) {
+      warn(['days', d, 'end'], 'no coordinates: the end can not be shown on the map')
     }
   })
 
@@ -118,12 +127,13 @@ export function checkTrip(trip: Trip): CheckResult {
 const hasCoords = (item?: { lat?: number; lng?: number }) => item?.lat !== undefined && item.lng !== undefined
 
 // A missing reference counts as "has coordinates": it is reported as an error already.
-function startCoords(day: Day, places: Map<string, Place>, accommodations: Map<string, Accommodation>): boolean {
-  const start = day.start
-  if (!start || hasCoords(start)) return true
-  if (start.placeId !== undefined) return !places.has(start.placeId) || hasCoords(places.get(start.placeId))
-  if (start.accommodationId !== undefined) {
-    const accommodation = accommodations.get(start.accommodationId)
+function pointCoords(
+  point: DayStart | DayEnd, places: Map<string, Place>, accommodations: Map<string, Accommodation>,
+): boolean {
+  if (hasCoords(point)) return true
+  if (point.placeId !== undefined) return !places.has(point.placeId) || hasCoords(places.get(point.placeId))
+  if (point.accommodationId !== undefined) {
+    const accommodation = accommodations.get(point.accommodationId)
     if (!accommodation || hasCoords(accommodation)) return true
     return accommodation.placeId !== undefined && hasCoords(places.get(accommodation.placeId))
   }

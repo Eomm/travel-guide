@@ -11,8 +11,15 @@ See `trips/hiroshima-sample/trip.json5` for a complete example.
 | `schemaVersion` | Always `1` for now |
 | `trip` | Title, dates, `timezone` (IANA), `currency` (ISO 4217, used by every price), optional `convertCurrency`, content `language` |
 | `places[]` | Places catalog. Places not used by any stop form the wishlist |
-| `days[]` | `date`, optional `start` point, ordered `stops[]`. A stop references a place (`placeId`) or is a free `title`; `travel` describes how to get there from the previous stop (or from `start`); `bookedId` links it to a reservation |
+| `days[]` | `date`, optional `start` point, ordered `stops[]`, optional `end` point. A stop references a place (`placeId`) or is a free `title`; `travel` describes how to get there from the previous stop (or from `start`); `bookedId` links it to a reservation |
 | `logistics` | `accommodations[]`, `transports[]` (flights, trains, passes), `reservations[]` |
+
+Start and end of a day:
+- `start` (place, accommodation or free point with `lat`/`lng`) defaults to the accommodation of the previous night.
+- `end` takes the same targets plus an arrival `time` and a `travel` (how to get there from the last stop, or from
+  the start when there are no stops). It defaults to the accommodation of that night (check-in date ≤ day date <
+  check-out date), else the start of the next day; the last day has no default. It is not shown when it is the
+  same point as the last stop.
 
 Conventions:
 - All ids are strings (`"5173"`, `"peace-museum"`).
@@ -24,28 +31,28 @@ Conventions:
 
 ## Routes and walking distance
 
-Each day is drawn as a route: `start` → stop 1 → stop 2 … Each leg uses the stop's `travel.mode`, mapped to
-Google Maps travel modes (walk → walking; train/subway/bus/tram/ferry → transit; taxi/car → driving;
-bike → bicycling; flight/other → straight line). A leg without `travel` is drawn as a straight line.
+Each day is drawn as a route: `start` → stop 1 → stop 2 … → `end`. Each leg uses the stop's `travel.mode` (the leg
+to the end uses `end.travel.mode`), mapped to Google Maps travel modes (walk → walking; train/subway/bus/tram/ferry →
+transit; taxi/car → driving; bike → bicycling; flight/other → straight line). A leg without `travel` is drawn as a straight line.
 
-The day recap shows the walking km: the sum of `distanceKm` of the `walk` legs. When `distanceKm` is missing,
-the build computes it from the route service, or from the straight-line distance × 1.3 as a fallback.
+The day recap shows the walking km: the sum of `distanceKm` of the `walk` legs, the leg to the `end` included.
+When `distanceKm` is missing, the build computes it from the route service, or from the straight-line distance × 1.3 as a fallback.
 
 ## Checks done by the build (not expressible in JSON Schema)
 
 Errors:
 1. `id`s are unique within places, within all stops, and within each logistics list.
-2. Every `placeId`, `accommodationId`, `bookedId` points to an existing item.
+2. Every `placeId`, `accommodationId`, `bookedId` points to an existing item (`start` and `end` included).
 3. A reservation is referenced by at most one stop; the stop's day `date` equals the reservation `date`, and
    the stop `time` equals the reservation `time` when set.
 4. Day dates are unique, in order, and inside `trip.startDate`..`trip.endDate`; `endDate >= startDate`.
-5. Stop times within a day are ascending.
+5. Stop times within a day are ascending; `end.time`, when set, is not before the last stop time.
 6. Relative files (`src`, `image`, `cover`) exist in the trip folder.
 
 Warnings:
 - a stop time outside the place's `openingHours.weekly`, or on one of its `closedDates`;
 - a stop on a place whose `status` is not `open`;
-- a stop or `start` without coordinates (it can't be placed on the map/route).
+- a stop, `start` or explicit `end` without coordinates (it can't be placed on the map/route).
 
 Run them with `npm run check:trips`: it validates every `trips/*/trip.json5` (or `.json`) against the schema,
 runs the checks above and prints the errors and warnings of each trip; it exits with 1 when there is any error.
@@ -66,7 +73,7 @@ Stop cost = price of the reservation in `bookedId` if it has one, else the stop 
 
 Trip total = Σ stop cost + Σ `travel.price` + Σ accommodation price + Σ transport price
 + Σ price of reservations not referenced by any stop.
-Per-day totals use the stops and travel of that day.
+Per-day totals use the stops and travel of that day, `end.travel.price` included (it is part of the trip total too).
 
 ## POI converter
 

@@ -204,6 +204,7 @@ export interface Day {
   notes?: MarkdownText
   start?: DayStart
   stops: Stop[]
+  end?: DayEnd
   /**
    * Custom data: any key starting with `x-`.
    */
@@ -278,6 +279,32 @@ export interface Travel {
    */
   line?: string
   notes?: MarkdownText
+}
+/**
+ * Where the day ends. Defaults to the accommodation of that night, else the start of the next day; the last day has no default.
+ */
+export interface DayEnd {
+  /**
+   * Arrival time.
+   */
+  time?: LocalTime
+  /**
+   * Reference to places[].id.
+   */
+  placeId?: Id
+  /**
+   * Reference to logistics.accommodations[].id.
+   */
+  accommodationId?: Id
+  title?: string
+  address?: string
+  notes?: MarkdownText
+  /**
+   * How to get from the last stop (or from the start when there are no stops) to the end.
+   */
+  travel?: Travel
+  lat?: number
+  lng?: number
 }
 export interface Logistics {
   accommodations?: Accommodation[]

@@ -142,6 +142,7 @@
         { id: 'd1-lunch', time: '12:30', placeId: 'okonomimura', durationMin: 60, travel: { mode: 'walk', durationMin: 15, distanceKm: 1.1 } },
         { id: 'd1-gigo', time: '15:00', placeId: '5173', durationMin: 90, travel: { mode: 'bus', durationMin: 25, price: 240 } },
       ],
+      end: { accommodationId: 'hotel-hiroshima', time: '18:00', travel: { mode: 'tram', durationMin: 25, price: 220 } },
     },
     {
       date: '2027-04-11',
@@ -154,6 +155,10 @@
         },
         { id: 'd2-lunch', time: '12:00', placeId: '13054', price: 2500, travel: { mode: 'walk', durationMin: 8 } },
       ],
+      end: {
+        title: 'Stazione di Hiroshima', lat: 34.3976, lng: 132.4753,
+        travel: { mode: 'train', line: 'JR Ferry + JR Sanyo Line', durationMin: 55, price: 0, notes: 'Coperto dal JR Pass.' },
+      },
     },
   ],
 
