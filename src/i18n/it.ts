@@ -206,4 +206,10 @@ export const it = {
   // not found
   'notFound.title': 'Pagina non trovata',
   'notFound.backHome': 'Torna alla home',
+
+  // opening hours
+  'hours.closedDate': 'Chiuso in questa data',
+  'hours.closedDay': 'Chiuso in questo giorno della settimana',
+  'hours.closedAt': 'Chiuso alle {time} (aperto {hours})',
+  'hours.closesDuring': 'Chiude alle {time}, prima della fine della visita',
 }

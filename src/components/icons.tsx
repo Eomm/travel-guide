@@ -174,3 +174,10 @@ export const CloseIcon = () => (
     <path d="M6 6l12 12M18 6L6 18" />
   </Icon>
 )
+
+export const WarningIcon = () => (
+  <Icon>
+    <path d="M12 3L2 20h20L12 3z" />
+    <path d="M12 10v4M12 17h.01" />
+  </Icon>
+)

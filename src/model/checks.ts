@@ -1,7 +1,8 @@
 // Semantic checks that JSON Schema can't express (schema/README.md, "Checks done by the build").
 // Pure TypeScript: runs in Node (check:trips) and in the browser (edit mode).
 // Rule 6 (relative files exist) needs the file system and lives in scripts/load-trips.ts.
-import type { Accommodation, DayEnd, DayStart, OpeningHours, Place, Trip } from './trip.gen.ts'
+import type { Accommodation, DayEnd, DayStart, Place, Trip } from './trip.gen.ts'
+import { type HoursProblem, hoursProblem } from './hours.ts'
 import { formatPath, type Issue } from './issues.ts'
 
 export interface CheckResult {
@@ -107,8 +108,8 @@ export function checkTrip(trip: Trip): CheckResult {
     if (stop.placeId !== undefined && !place) continue // already an error
     if (place?.status && place.status !== 'open') warn(path, `place "${place.id}" is ${place.status}`)
     if (place?.openingHours) {
-      const closed = closedReason(place.openingHours, day.date, stop.time)
-      if (closed) warn(path, `place "${place.id}" ${closed}`)
+      const problem = hoursProblem(place.openingHours, day.date, stop.time, stop.durationMin)
+      if (problem) warn(path, `place "${place.id}" ${describeProblem(problem, stop.durationMin)}`)
     }
     if (!hasCoords(place)) warn(path, 'no coordinates: the stop can not be shown on the map')
   }
@@ -140,37 +141,12 @@ function pointCoords(
   return false
 }
 
-const weekdays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'] as const
-
-/** Day of the week of a YYYY-MM-DD date, independent of the local timezone. */
-export function weekday(date: string): (typeof weekdays)[number] {
-  const [y, m, d] = date.split('-').map(Number)
-  return weekdays[new Date(Date.UTC(y, m - 1, d)).getUTCDay()]
-}
-
-const minutes = (time: string) => {
-  const [h, m] = time.split(':').map(Number)
-  return h * 60 + m
-}
-
-/**
- * Why a place is closed on `date` at `time`, or undefined when it is open (or unknown).
- * Only the stop start time is checked. With `weekly`, a missing weekday means closed; ranges ending
- * past 24:00 (e.g. 17:00-26:00) also cover the early hours of the next day. Without `weekly`, only
- * `closedDates` is checked.
- */
-export function closedReason(hours: OpeningHours, date: string, time?: string): string | undefined {
-  if (hours.closedDates?.includes(date)) return `is closed on ${date}`
-  if (!hours.weekly || time === undefined) return undefined
-  const day = weekday(date)
-  const previousDay = weekdays[(weekdays.indexOf(day) + 6) % 7]
-  const t = minutes(time)
-  const inRanges = (ranges: string[] | undefined, at: number) =>
-    (ranges ?? []).some((range) => {
-      const [from, to] = range.split('-').map(minutes)
-      return from <= at && at < to
-    })
-  if (inRanges(hours.weekly[day], t) || inRanges(hours.weekly[previousDay], t + 24 * 60)) return undefined
-  const ranges = hours.weekly[day]
-  return ranges?.length ? `is closed at ${time} on ${day} (open ${ranges.join(', ')})` : `is closed on ${day}`
+function describeProblem(problem: HoursProblem, durationMin?: number): string {
+  switch (problem.kind) {
+    case 'closedDate': return `is closed on ${problem.date}`
+    case 'closedDay': return `is closed on ${problem.day}`
+    case 'closedAt': return `is closed at ${problem.time} on ${problem.day} (open ${problem.ranges.join(', ')})`
+    case 'closesDuring':
+      return `closes at ${problem.closes} on ${problem.day}, before the end of the stop (${problem.time} + ${durationMin} min)`
+  }
 }

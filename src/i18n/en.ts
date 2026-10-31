@@ -207,4 +207,10 @@ export const en: Messages = {
   // not found
   'notFound.title': 'Page not found',
   'notFound.backHome': 'Back to home',
+
+  // opening hours
+  'hours.closedDate': 'Closed on this date',
+  'hours.closedDay': 'Closed on this day of the week',
+  'hours.closedAt': 'Closed at {time} (open {hours})',
+  'hours.closesDuring': 'Closes at {time}, before the end of the visit',
 }
