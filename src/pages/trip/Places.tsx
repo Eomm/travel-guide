@@ -9,6 +9,7 @@ import { useI18n } from '../../i18n/i18n.ts'
 import { categoryLabel, comparePlaces, normalizeText, placeCategories, placeUses, type PlaceUse } from '../../model/places.ts'
 import type { Place } from '../../model/trip.gen.ts'
 import styles from './Places.module.css'
+import PlacesMap from './places/PlacesMap.tsx'
 
 interface Filters {
   query: string
@@ -146,6 +147,8 @@ export default function Places() {
           )}
         </div>
       )}
+
+      <PlacesMap places={visible} uses={uses} />
 
       <p className={styles.count} aria-live="polite">
         {t(visible.length === 1 ? 'places.count.one' : 'places.count.other', { count: visible.length })}

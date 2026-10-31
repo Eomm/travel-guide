@@ -54,7 +54,10 @@ and its errors are shown in the terminal and in the browser overlay. The app rea
 
 Each itinerary day shows an embedded Google map (`src/pages/trip/itinerary/DayMap.tsx`): numbered markers for the
 start and the stops, real routes for walk / drive / bike legs (Maps JavaScript API, Routes library) and dashed
-straight lines for the others (Google has no transit data in Japan). It needs two build-time variables:
+straight lines for the others (Google has no transit data in Japan). The Places page shows the places matching
+the filters on a map (`src/pages/trip/places/PlacesMap.tsx`, no routes): filled calendar markers for places used
+in a day, dashed heart markers for the wishlist. Both share the collapsible card in `src/components/map/`.
+It needs two build-time variables:
 
 - `VITE_GMAPS_KEY`: a Maps JavaScript API key;
 - `VITE_GMAPS_MAP_ID`: a map ID (Advanced Markers, light/dark map); Google's `DEMO_MAP_ID` is used when unset.

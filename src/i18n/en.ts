@@ -117,6 +117,17 @@ export const en: Messages = {
   'places.inWishlist': 'In your wishlist: not in any day yet.',
   'places.dayNumber': 'Day {number}',
   'places.onlyUnused': 'Only places not in any day',
+  'places.map': 'Map of the places',
+  'places.showMap': 'Show map',
+  'places.hideMap': 'Hide map',
+  'places.mapUnavailable': 'Map not available right now.',
+  'places.mapLegend': 'Map legend',
+  'places.mapScheduled': 'In a day',
+  'places.mapWishlist': 'Not in any day',
+  'places.details': 'Details',
+  'places.closeSelection': 'Close',
+  'places.noCoords.one': '{count} place without coordinates is not on the map.',
+  'places.noCoords.other': '{count} places without coordinates are not on the map.',
 
   // logistics
   'logistics.title': 'Logistics',

@@ -116,6 +116,17 @@ export const it = {
   'places.inWishlist': 'Nella tua wishlist: non è ancora in nessun giorno.',
   'places.dayNumber': 'Giorno {number}',
   'places.onlyUnused': 'Solo luoghi non in nessun giorno',
+  'places.map': 'Mappa dei luoghi',
+  'places.showMap': 'Mostra mappa',
+  'places.hideMap': 'Nascondi mappa',
+  'places.mapUnavailable': 'Mappa non disponibile al momento.',
+  'places.mapLegend': 'Legenda della mappa',
+  'places.mapScheduled': 'In un giorno',
+  'places.mapWishlist': 'In nessun giorno',
+  'places.details': 'Dettagli',
+  'places.closeSelection': 'Chiudi',
+  'places.noCoords.one': '{count} luogo senza coordinate non è sulla mappa.',
+  'places.noCoords.other': '{count} luoghi senza coordinate non sono sulla mappa.',
 
   // logistics
   'logistics.title': 'Logistica',
