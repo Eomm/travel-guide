@@ -2,8 +2,11 @@
 import { createContext, useContext } from 'react'
 import type { it } from './it.ts'
 
-export const languages = ['it', 'en'] as const
+export const languages = ['it', 'en', 'ja'] as const
 export type Lang = (typeof languages)[number]
+
+/** Each language named in itself, so a reader finds their own whatever the current language. */
+export const languageNames: Record<Lang, string> = { it: 'Italiano', en: 'English', ja: '日本語' }
 
 export type MessageKey = keyof typeof it
 export type Messages = Record<MessageKey, string>

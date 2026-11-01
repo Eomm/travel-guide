@@ -2,7 +2,7 @@
 import type { Lang } from '../i18n/i18n.ts'
 import type { TripSettings } from './trip.gen.ts'
 
-const locales: Record<Lang, string> = { it: 'it-IT', en: 'en-GB' }
+const locales: Record<Lang, string> = { it: 'it-IT', en: 'en-GB', ja: 'ja-JP' }
 export const locale = (lang: Lang) => locales[lang]
 
 /** `YYYY-MM-DD` as a UTC midnight Date: format it with `timeZone: 'UTC'` to avoid day shifts. */
