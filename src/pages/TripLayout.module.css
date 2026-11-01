@@ -55,6 +55,11 @@
   padding-bottom: calc(var(--tabbar-height) + env(safe-area-inset-bottom) + var(--space-6));
 }
 
+/* and for the mini player above it */
+.withPlayer {
+  padding-bottom: calc(var(--tabbar-height) + var(--player-height) + env(safe-area-inset-bottom) + var(--space-6));
+}
+
 .status {
   color: var(--color-muted);
 }

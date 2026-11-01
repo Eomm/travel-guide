@@ -1,6 +1,8 @@
 // `/:slug/places/:placeId`: everything about one place, with its audio guides and where it is in the itinerary.
 import type { ReactNode } from 'react'
 import { Link, useParams } from 'react-router'
+import { isSameTrack, playerTrack, useAudio } from '../../audio/audio.ts'
+import { PlayButton, SeekBar } from '../../components/audio/AudioControls.tsx'
 import { BackIcon, GlobeIcon, PhoneIcon, PlacesIcon, TicketIcon } from '../../components/icons.tsx'
 import PlaceBadges from '../../components/PlaceBadges.tsx'
 import Price from '../../components/Price.tsx'
@@ -8,7 +10,7 @@ import Stars from '../../components/Stars.tsx'
 import { useTrip } from '../../data/trip-context.ts'
 import { resolveResource } from '../../data/trips.ts'
 import { useI18n, type Lang } from '../../i18n/i18n.ts'
-import { formatDate, locale } from '../../model/format.ts'
+import { formatClock, formatDate, locale } from '../../model/format.ts'
 import { placeUrl } from '../../model/maps.ts'
 import { categoryLabel, groupWeekly, placeUses, weekdays, type Weekday } from '../../model/places.ts'
 import type { AudioTrack, OpeningHours, Place } from '../../model/trip.gen.ts'
@@ -59,20 +61,29 @@ function WeeklyHours({ weekly }: { weekly: NonNullable<OpeningHours['weekly']> }
   )
 }
 
-function AudioGuide({ track }: { track: AudioTrack }) {
-  const { slug } = useTrip()
+/** A track of the place: plays in the shared player, which shows its progress here too while it is the current one. */
+function AudioGuide({ track, place }: { track: AudioTrack; place: Place }) {
+  const { slug, trip } = useTrip()
   const { lang, t } = useI18n()
+  const { track: current } = useAudio()
+  const playable = playerTrack(track, slug, place.name, trip.trip.title)
+  const isCurrent = isSameTrack(current, playable)
   return (
     <li className={styles.track}>
-      <p className={styles.trackTitle}>
-        {track.title}
-        {track.language && <span className={styles.trackLang}> · {languageName(track.language, lang)}</span>}
-      </p>
-      {track.src ? (
-        <audio className={styles.audio} controls preload="none" src={resolveResource(slug, track.src)} />
-      ) : (
-        <p className={styles.muted}>{t('places.audioUnavailable')}</p>
-      )}
+      <div className={styles.trackHead}>
+        {playable && <PlayButton track={playable} className={styles.play} />}
+        <div>
+          <p className={styles.trackTitle}>
+            {track.title}
+            {track.language && <span className={styles.trackLang}> · {languageName(track.language, lang)}</span>}
+          </p>
+          {playable && !isCurrent && track.durationSec !== undefined && (
+            <p className={styles.trackDuration}>{formatClock(track.durationSec)}</p>
+          )}
+        </div>
+      </div>
+      {isCurrent && <SeekBar />}
+      {!playable && <p className={styles.muted}>{t('places.audioUnavailable')}</p>}
       {track.transcript && (
         <details className={styles.transcript}>
           <summary>{t('places.transcript')}</summary>
@@ -210,7 +221,7 @@ export default function PlaceDetail() {
         <Section title={t('places.audio')}>
           <ul className={styles.tracks}>
             {place.audio.map((track, index) => (
-              <AudioGuide key={track.id ?? index} track={track} />
+              <AudioGuide key={track.id ?? index} track={track} place={place} />
             ))}
           </ul>
         </Section>

@@ -143,8 +143,34 @@
   background: var(--color-surface);
 }
 
-.section .trackTitle {
+.trackHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
   margin-bottom: var(--space-2);
+}
+
+.play {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap-size);
+  height: var(--tap-size);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: var(--color-surface);
+  cursor: pointer;
+}
+
+.play:active {
+  opacity: 0.8;
+}
+
+.section .trackTitle {
+  margin: 0;
   font-weight: 600;
 }
 
@@ -153,9 +179,11 @@
   font-weight: 400;
 }
 
-.audio {
-  display: block;
-  width: 100%;
+.section .trackDuration {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
 }
 
 .section .track > p:last-child {

@@ -1,5 +1,8 @@
 // `/:slug`: loads the trip once, handles loading / not found / error, and gives it to the child pages via useTrip().
 import { Link, Outlet, useParams } from 'react-router'
+import { useAudio } from '../audio/audio.ts'
+import AudioProvider from '../audio/AudioProvider.tsx'
+import MiniPlayer from '../components/audio/MiniPlayer.tsx'
 import { BackIcon } from '../components/icons.tsx'
 import LanguageSwitch from '../components/LanguageSwitch.tsx'
 import TabBar from '../components/TabBar.tsx'
@@ -10,10 +13,15 @@ import { useAsync } from '../data/useAsync.ts'
 import { useI18n } from '../i18n/i18n.ts'
 import styles from './TripLayout.module.css'
 
-export default function TripLayout() {
-  const { slug = '' } = useParams()
+function Layout({ slug }: { slug: string }) {
   const { t } = useI18n()
+  const { track } = useAudio()
   const state = useAsync(loadTrip, slug)
+  const mainClass = [
+    styles.main,
+    state.status === 'success' && styles.withTabs,
+    track && styles.withPlayer,
+  ].filter(Boolean).join(' ')
   return (
     <>
       <header className={styles.header}>
@@ -28,7 +36,7 @@ export default function TripLayout() {
           </div>
         </div>
       </header>
-      <main className={state.status === 'success' ? `${styles.main} ${styles.withTabs}` : styles.main}>
+      <main className={mainClass}>
         {state.status === 'loading' && <p className={styles.status}>{t('common.loading')}</p>}
         {state.status === 'error' && state.error instanceof NotFoundError && <h1>{t('trip.notFound')}</h1>}
         {state.status === 'error' && !(state.error instanceof NotFoundError) && (
@@ -40,7 +48,22 @@ export default function TripLayout() {
           </TripContext>
         )}
       </main>
-      {state.status === 'success' && <TabBar />}
+      {state.status === 'success' && (
+        <>
+          <MiniPlayer />
+          <TabBar />
+        </>
+      )}
     </>
+  )
+}
+
+export default function TripLayout() {
+  const { slug = '' } = useParams()
+  // one player per trip: leaving the trip or opening another one stops the audio
+  return (
+    <AudioProvider key={slug}>
+      <Layout slug={slug} />
+    </AudioProvider>
   )
 }

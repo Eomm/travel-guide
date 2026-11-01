@@ -218,4 +218,14 @@ export const ja: Messages = {
   'hours.closedDay': 'この曜日は定休日です',
   'hours.closedAt': '{time}は営業時間外です (営業時間 {hours})',
   'hours.closesDuring': '{time}に閉まります。見学が終わる前です',
+
+  // audio player
+  'audio.player': '音声プレーヤー',
+  'audio.play': '{title}を再生',
+  'audio.pause': '{title}を一時停止',
+  'audio.back': '{seconds}秒戻る',
+  'audio.forward': '{seconds}秒進む',
+  'audio.seek': '再生位置',
+  'audio.position': '{current} / {duration}',
+  'audio.close': 'プレーヤーを閉じる',
 }

@@ -81,6 +81,14 @@ export function formatDuration(minutes: number, lang: Lang): string {
   return parts.filter(Boolean).join(' ')
 }
 
+/** Audio position or length: `2:39`, `1:02:05`. */
+export function formatClock(seconds: number): string {
+  const total = Math.floor(seconds)
+  const [hours, minutes, rest] = [Math.floor(total / 3600), Math.floor(total / 60) % 60, total % 60]
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return hours > 0 ? `${hours}:${pad(minutes)}:${pad(rest)}` : `${minutes}:${pad(rest)}`
+}
+
 /** A local date (`YYYY-MM-DD`) or date-time (`YYYY-MM-DDTHH:MM`), with no timezone shift: `sab 10 apr, 15:00`. */
 export function formatLocalDateTime(value: string, lang: Lang, style: DateStyle = 'short'): string {
   const [date, time] = value.split('T')

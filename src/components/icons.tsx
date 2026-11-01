@@ -182,6 +182,36 @@ export const WarningIcon = () => (
   </Icon>
 )
 
+// audio player
+
+export const PlayIcon = () => (
+  <Icon>
+    <path d="M7 4.5v15l12.5-7.5z" fill="currentColor" />
+  </Icon>
+)
+
+export const PauseIcon = () => (
+  <Icon>
+    <path d="M7 5h3v14H7zM14 5h3v14h-3z" fill="currentColor" />
+  </Icon>
+)
+
+// back / forward by 15 seconds (skipSeconds in src/audio/audio.ts)
+
+export const Back15Icon = () => (
+  <Icon>
+    <path d="M3 12a9 9 0 1 0 2.6-6.4L3 8M3 3v5h5" />
+    <text x="12.5" y="15.5" textAnchor="middle" fontSize="8.5" fontWeight="700" fill="currentColor" stroke="none">15</text>
+  </Icon>
+)
+
+export const Forward15Icon = () => (
+  <Icon>
+    <path d="M21 12a9 9 0 1 1-2.6-6.4L21 8M21 3v5h-5" />
+    <text x="11.5" y="15.5" textAnchor="middle" fontSize="8.5" fontWeight="700" fill="currentColor" stroke="none">15</text>
+  </Icon>
+)
+
 // theme
 
 export const SunIcon = () => (

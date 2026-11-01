@@ -217,4 +217,14 @@ export const en: Messages = {
   'hours.closedDay': 'Closed on this day of the week',
   'hours.closedAt': 'Closed at {time} (open {hours})',
   'hours.closesDuring': 'Closes at {time}, before the end of the visit',
+
+  // audio player
+  'audio.player': 'Audio player',
+  'audio.play': 'Play {title}',
+  'audio.pause': 'Pause {title}',
+  'audio.back': 'Back {seconds} seconds',
+  'audio.forward': 'Forward {seconds} seconds',
+  'audio.seek': 'Position in the track',
+  'audio.position': '{current} of {duration}',
+  'audio.close': 'Close the player',
 }

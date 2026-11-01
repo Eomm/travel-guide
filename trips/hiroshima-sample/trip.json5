@@ -62,7 +62,8 @@
         {
           title: 'Introduzione al museo',
           language: 'it',
-          src: 'audio/peace-museum-intro-it.mp3',
+          src: 'audio/example.mp3',
+          durationSec: 159,
           transcript: 'Il 6 agosto 1945...',
         },
         {
@@ -149,6 +150,8 @@
         {
           id: 'd2-shrine', time: '09:00', placeId: 'itsukushima', durationMin: 120,
           travel: { mode: 'train', line: 'JR Sanyo Line + JR Ferry', durationMin: 55, price: 0, notes: 'Coperto dal JR Pass.' },
+          // Audio of the stop itself (the place tracks are on the place page): a play button on the stop card.
+          audio: [{ title: 'Arrivo a Miyajima', language: 'it', src: 'audio/example.mp3', durationSec: 159 }],
         },
         // Kakiya closes at 18:00: on purpose, to show the opening-hours warning on the stop card.
         { id: 'd2-oysters', time: '17:30', placeId: '13054', durationMin: 60, price: 2500, travel: { mode: 'walk', durationMin: 8 } },

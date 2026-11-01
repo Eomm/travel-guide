@@ -216,4 +216,14 @@ export const it = {
   'hours.closedDay': 'Chiuso in questo giorno della settimana',
   'hours.closedAt': 'Chiuso alle {time} (aperto {hours})',
   'hours.closesDuring': 'Chiude alle {time}, prima della fine della visita',
+
+  // audio player
+  'audio.player': 'Lettore audio',
+  'audio.play': 'Riproduci {title}',
+  'audio.pause': 'Metti in pausa {title}',
+  'audio.back': 'Indietro di {seconds} secondi',
+  'audio.forward': 'Avanti di {seconds} secondi',
+  'audio.seek': 'Posizione nella traccia',
+  'audio.position': '{current} di {duration}',
+  'audio.close': 'Chiudi il lettore',
 }

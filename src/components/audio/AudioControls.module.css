@@ -1,0 +1,28 @@
+.seek {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.time {
+  flex-shrink: 0;
+  min-width: 2.5em;
+  color: var(--color-muted);
+  font-size: var(--font-size-xs);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+/* the input is taller than its track: an easier target for a finger */
+.range {
+  flex: 1;
+  min-width: 0;
+  height: 32px;
+  margin: 0;
+  accent-color: var(--color-accent);
+  cursor: pointer;
+}
+
+.range:disabled {
+  cursor: default;
+}
