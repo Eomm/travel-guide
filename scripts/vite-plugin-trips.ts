@@ -4,7 +4,8 @@
 //   data/<slug>/<path>       every relative resource of the trip (cover, image, audio src)
 // `vite build` emits these files and fails when a trip has errors; `vite dev` serves them from memory,
 // reloads on changes in the trips folder and shows the errors in the overlay (invalid trips are left out).
-import { createReadStream, readFileSync } from 'node:fs'
+import { createReadStream, readFileSync, statSync } from 'node:fs'
+import type { IncomingMessage, ServerResponse } from 'node:http'
 import { extname, posix, resolve, sep } from 'node:path'
 import type { Plugin, ViteDevServer } from 'vite'
 import type { TripSummary } from '../src/model/trip-index.ts'
@@ -55,6 +56,32 @@ const contentTypes: Record<string, string> = {
   '.svg': 'image/svg+xml',
 }
 
+/**
+ * Streams a trip file, honouring a single `Range: bytes=…` request: without it the browser can't seek
+ * in an audio file (setting `currentTime` jumps back to the start).
+ */
+function sendFile(req: IncomingMessage, res: ServerResponse, file: string, next: (error?: unknown) => void) {
+  const size = statSync(file).size
+  res.setHeader('Accept-Ranges', 'bytes')
+  const range = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range ?? '')
+  if (!range || (!range[1] && !range[2])) {
+    res.setHeader('Content-Length', size)
+    return createReadStream(file).on('error', next).pipe(res)
+  }
+  // `bytes=500-` from 500 to the end, `bytes=-500` the last 500 bytes
+  const start = range[1] ? Number(range[1]) : Math.max(size - Number(range[2]), 0)
+  const end = range[1] && range[2] ? Math.min(Number(range[2]), size - 1) : size - 1
+  if (start > end) {
+    res.statusCode = 416
+    res.setHeader('Content-Range', `bytes */${size}`)
+    return res.end()
+  }
+  res.statusCode = 206
+  res.setHeader('Content-Range', `bytes ${start}-${end}/${size}`)
+  res.setHeader('Content-Length', end - start + 1)
+  createReadStream(file, { start, end }).on('error', next).pipe(res)
+}
+
 export default function trips({ dir = 'trips' } = {}): Plugin {
   let tripsDir = ''
   let isBuild = false
@@ -100,7 +127,7 @@ export default function trips({ dir = 'trips' } = {}): Plugin {
       }
       const path = 'file' in output ? output.file : pathname
       res.setHeader('Content-Type', contentTypes[extname(path).toLowerCase()] ?? 'application/octet-stream')
-      if ('file' in output) createReadStream(output.file).on('error', next).pipe(res)
+      if ('file' in output) sendFile(req, res, output.file, next)
       else res.end(output.source)
     })
   }
