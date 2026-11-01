@@ -150,7 +150,8 @@
           id: 'd2-shrine', time: '09:00', placeId: 'itsukushima', durationMin: 120,
           travel: { mode: 'train', line: 'JR Sanyo Line + JR Ferry', durationMin: 55, price: 0, notes: 'Coperto dal JR Pass.' },
         },
-        { id: 'd2-lunch', time: '12:00', placeId: '13054', price: 2500, travel: { mode: 'walk', durationMin: 8 } },
+        // Kakiya closes at 18:00: on purpose, to show the opening-hours warning on the stop card.
+        { id: 'd2-oysters', time: '17:30', placeId: '13054', durationMin: 60, price: 2500, travel: { mode: 'walk', durationMin: 8 } },
       ],
       end: {
         title: 'Stazione di Hiroshima', lat: 34.3976, lng: 132.4753,
