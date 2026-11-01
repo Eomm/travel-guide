@@ -1,5 +1,6 @@
 import { APILoadingStatus, APIProvider, ColorScheme, Map, useApiLoadingStatus, useMap } from '@vis.gl/react-google-maps'
 import { type ReactNode, useEffect, useRef } from 'react'
+import { useTheme } from '../../theme/theme.ts'
 import styles from './MapCard.module.css'
 import { type LatLng, mapId, mapsKey, useHiddenMap, useOnline } from './map.ts'
 
@@ -71,9 +72,12 @@ function FitBounds({ positions }: { positions: LatLng[] }) {
 
 /** The map inside a MapCard, fitted to `positions`; markers and lines as children. */
 export function MapView({ positions, children }: { positions: LatLng[]; children: ReactNode }) {
+  const { theme } = useTheme()
+  // the color scheme is fixed when the map is created: a new theme needs a new map (`key`)
   return (
-    <Map className={styles.map} mapId={mapId} defaultCenter={positions[0]} defaultZoom={13}
-      gestureHandling="cooperative" disableDefaultUI zoomControl clickableIcons={false} colorScheme={ColorScheme.FOLLOW_SYSTEM}>
+    <Map key={theme} className={styles.map} mapId={mapId} defaultCenter={positions[0]} defaultZoom={13}
+      gestureHandling="cooperative" disableDefaultUI zoomControl clickableIcons={false}
+      colorScheme={theme === 'dark' ? ColorScheme.DARK : ColorScheme.LIGHT}>
       <FitBounds positions={positions} />
       {children}
     </Map>
