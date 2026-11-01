@@ -9,9 +9,11 @@ on:
 permissions:
   contents: read
 
+# Pull requests: a new push cancels the older run of the same PR. Main: deploys queue up and are never cancelled,
+# also not by the run of a just-merged PR (it has no merge ref, so it would fall in the main group).
 concurrency:
-  group: pages-${{ github.ref }}
-  cancel-in-progress: true
+  group: pages-${{ github.event_name }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
