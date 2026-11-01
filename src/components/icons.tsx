@@ -196,6 +196,14 @@ export const PauseIcon = () => (
   </Icon>
 )
 
+export const HeadphonesIcon = () => (
+  <Icon>
+    <path d="M4 15v-3a8 8 0 0 1 16 0v3" />
+    <rect x="3" y="14" width="5" height="7" rx="2" />
+    <rect x="16" y="14" width="5" height="7" rx="2" />
+  </Icon>
+)
+
 // back / forward by 15 seconds (skipSeconds in src/audio/audio.ts)
 
 export const Back15Icon = () => (

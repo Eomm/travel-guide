@@ -1,6 +1,6 @@
 // `/:slug/places/:placeId`: everything about one place, with its audio guides and where it is in the itinerary.
-import type { ReactNode } from 'react'
-import { Link, useParams } from 'react-router'
+import { useEffect, type ReactNode } from 'react'
+import { Link, useLocation, useParams } from 'react-router'
 import { isSameTrack, playerTrack, useAudio } from '../../audio/audio.ts'
 import { PlayButton, SeekBar } from '../../components/audio/AudioControls.tsx'
 import { BackIcon, GlobeIcon, PhoneIcon, PlacesIcon, TicketIcon } from '../../components/icons.tsx'
@@ -33,9 +33,9 @@ function languageName(tag: string, lang: Lang): string {
   }
 }
 
-function Section({ title, children }: { title: string; children: ReactNode }) {
+function Section({ id, title, children }: { id?: string; title: string; children: ReactNode }) {
   return (
-    <section className={styles.section}>
+    <section id={id} className={styles.section}>
       <h2 className={styles.sectionTitle}>{title}</h2>
       {children}
     </section>
@@ -126,6 +126,12 @@ export default function PlaceDetail() {
   const { slug, trip } = useTrip()
   const { lang, t } = useI18n()
   const place = trip.places.find((p) => p.id === placeId)
+  const { hash } = useLocation()
+
+  // `#audio` from the itinerary: go straight to the audio guides
+  useEffect(() => {
+    if (hash) document.getElementById(hash.slice(1))?.scrollIntoView()
+  }, [hash, placeId])
 
   const back = (
     <Link to=".." relative="path" className={styles.back}>
@@ -218,7 +224,7 @@ export default function PlaceDetail() {
       )}
 
       {place.audio && place.audio.length > 0 && (
-        <Section title={t('places.audio')}>
+        <Section id="audio" title={t('places.audio')}>
           <ul className={styles.tracks}>
             {place.audio.map((track, index) => (
               <AudioGuide key={track.id ?? index} track={track} place={place} />

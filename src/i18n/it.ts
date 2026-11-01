@@ -80,6 +80,9 @@ export const it = {
   'itinerary.endStay': 'il tuo alloggio',
   'itinerary.endNextStart': 'partenza del giorno dopo',
   'itinerary.today': 'Oggi',
+  'itinerary.audioGuides.one': 'Audioguida',
+  'itinerary.audioGuides.other': '{count} audioguide',
+  'itinerary.audioGuidesOf': 'Audioguide di {name}',
 
   // places
   'places.title': 'Luoghi',

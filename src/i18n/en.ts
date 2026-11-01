@@ -81,6 +81,9 @@ export const en: Messages = {
   'itinerary.endStay': 'your accommodation',
   'itinerary.endNextStart': "next day's start",
   'itinerary.today': 'Today',
+  'itinerary.audioGuides.one': 'Audio guide',
+  'itinerary.audioGuides.other': '{count} audio guides',
+  'itinerary.audioGuidesOf': 'Audio guides of {name}',
 
   // places
   'places.title': 'Places',

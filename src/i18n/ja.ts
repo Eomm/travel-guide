@@ -82,6 +82,9 @@ export const ja: Messages = {
   'itinerary.endStay': '宿泊先',
   'itinerary.endNextStart': '翌日の出発地',
   'itinerary.today': '今日',
+  'itinerary.audioGuides.one': '音声ガイド',
+  'itinerary.audioGuides.other': '音声ガイド{count}件',
+  'itinerary.audioGuidesOf': '{name}の音声ガイド',
 
   // places
   'places.title': 'スポット',

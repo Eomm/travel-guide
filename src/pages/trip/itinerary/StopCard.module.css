@@ -97,6 +97,7 @@
 
 .maps {
   display: inline-flex;
+  margin-right: var(--space-4);
   align-items: center;
   gap: var(--space-1);
   min-height: var(--tap-size);

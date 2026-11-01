@@ -1,7 +1,7 @@
 import { Link } from 'react-router'
 import { playerTrack } from '../../../audio/audio.ts'
 import { PlayButton } from '../../../components/audio/AudioControls.tsx'
-import { PlacesIcon, WarningIcon } from '../../../components/icons.tsx'
+import { HeadphonesIcon, PlacesIcon, WarningIcon } from '../../../components/icons.tsx'
 import Price from '../../../components/Price.tsx'
 import { useTrip } from '../../../data/trip-context.ts'
 import { type I18n, useI18n } from '../../../i18n/i18n.ts'
@@ -55,7 +55,8 @@ export default function StopCard({ stop, point, date, id, highlighted, number }:
   const cost = stopCost(stop, trip)
   const maps = placeUrl(point)
   const hours = place?.openingHours && hoursProblem(place.openingHours, date, stop.time, stop.durationMin)
-  // the audio of the stop itself; the place tracks are on the place page
+  // the audio of the stop itself; the place tracks are on the place page, linked below
+  const placeTracks = place?.audio?.filter((track) => track.src).length ?? 0
   const tracks = (stop.audio ?? []).map((track) => playerTrack(track, slug, point.name, trip.trip.title)).filter((track) => !!track)
   return (
     <article id={id} className={highlighted ? `${styles.card} ${styles.highlighted}` : styles.card}>
@@ -94,6 +95,13 @@ export default function StopCard({ stop, point, date, id, highlighted, number }:
           {track.title}
         </PlayButton>
       ))}
+      {place && placeTracks > 0 && (
+        <Link className={styles.maps} to={{ pathname: `/${slug}/places/${encodeURIComponent(place.id)}`, hash: 'audio' }}
+          aria-label={t('itinerary.audioGuidesOf', { name: point.name })}>
+          <HeadphonesIcon />
+          {placeTracks === 1 ? t('itinerary.audioGuides.one') : t('itinerary.audioGuides.other', { count: placeTracks })}
+        </Link>
+      )}
       {maps && (
         <a className={styles.maps} href={maps} target="_blank" rel="noreferrer"
           aria-label={t('itinerary.mapsOf', { name: point.name })}>
