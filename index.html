@@ -3,20 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#f6f7f9" />
+    <!-- filled by the app on start with the background of the theme (src/theme/ThemeProvider.tsx) -->
+    <meta name="theme-color" />
     <title>Travel Guide</title>
     <script>
       // Apply the theme before the first paint: the app does it again on start (src/theme/).
-      // The colors and the storage key are the ones of src/styles.css and src/theme/theme.ts.
-      let saved = null
-      try {
-        saved = localStorage.getItem('travel-guide.theme')
-      } catch {
-        // storage blocked (private mode, disabled cookies)
+      // The storage key is the one of src/theme/theme.ts. A block, so nothing leaks into the globals.
+      {
+        let saved = null
+        try {
+          saved = localStorage.getItem('travel-guide.theme')
+        } catch {
+          // storage blocked (private mode, disabled cookies)
+        }
+        const dark = saved === 'dark' || (saved !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches)
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light'
       }
-      const dark = saved === 'dark' || (saved !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches)
-      document.documentElement.dataset.theme = dark ? 'dark' : 'light'
-      document.querySelector('meta[name="theme-color"]').setAttribute('content', dark ? '#121212' : '#f6f7f9')
     </script>
   </head>
   <body>
