@@ -1,0 +1,94 @@
+/* a sheet at the bottom of the screen on a phone, centred on a wider one */
+.dialog {
+  width: 100%;
+  max-width: var(--container-max);
+  max-height: 90dvh;
+  margin: auto auto 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius) var(--radius) 0 0;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.dialog::backdrop {
+  background: rgb(0 0 0 / 45%);
+}
+
+@media (min-width: 720px) {
+  .dialog {
+    margin: auto;
+    border-radius: var(--radius);
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--gutter) calc(var(--space-4) + env(safe-area-inset-bottom));
+}
+
+.title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  color: var(--color-muted);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+/* 16px: smaller text makes iOS zoom into the field */
+.field input,
+.field textarea {
+  width: 100%;
+  min-height: var(--tap-size);
+  padding: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.field textarea {
+  resize: vertical;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.cancel,
+.apply {
+  min-height: var(--tap-size);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--color-text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.apply {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-surface);
+}

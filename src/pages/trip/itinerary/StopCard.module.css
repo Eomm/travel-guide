@@ -111,8 +111,9 @@
   height: 18px;
 }
 
-/* an audio track of the stop: on the line of the maps link while they fit */
-.audio {
+/* an audio track of the stop, and the edit button: on the line of the maps link while they fit */
+.audio,
+.edit {
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
@@ -129,7 +130,8 @@
   cursor: pointer;
 }
 
-.audio svg {
+.audio svg,
+.edit svg {
   flex-shrink: 0;
   width: 18px;
   height: 18px;

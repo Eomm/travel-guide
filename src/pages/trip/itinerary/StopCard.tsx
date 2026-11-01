@@ -1,9 +1,12 @@
+import { useState } from 'react'
 import { Link } from 'react-router'
 import { playerTrack } from '../../../audio/audio.ts'
 import { PlayButton } from '../../../components/audio/AudioControls.tsx'
-import { HeadphonesIcon, PlacesIcon, WarningIcon } from '../../../components/icons.tsx'
+import { EditIcon, HeadphonesIcon, PlacesIcon, WarningIcon } from '../../../components/icons.tsx'
 import Price from '../../../components/Price.tsx'
 import { useTrip } from '../../../data/trip-context.ts'
+import { useEdit } from '../../../edit/edit.ts'
+import StopForm from '../../../edit/StopForm.tsx'
 import { type I18n, useI18n } from '../../../i18n/i18n.ts'
 import { stopCost } from '../../../model/budget.ts'
 import { formatDuration } from '../../../model/format.ts'
@@ -39,6 +42,8 @@ interface Props {
   point: Point
   /** Date of the day, for the opening hours. */
   date: string
+  /** Index of the stop in the day, for edit mode. */
+  index: number
   /** Element id, the target of the map markers. */
   id?: string
   /** Briefly highlighted after a tap on its map marker. */
@@ -47,8 +52,10 @@ interface Props {
   number?: number
 }
 
-export default function StopCard({ stop, point, date, id, highlighted, number }: Props) {
+export default function StopCard({ stop, point, date, index, id, highlighted, number }: Props) {
   const { slug, trip } = useTrip()
+  const { editing } = useEdit()
+  const [form, setForm] = useState(false)
   const { lang, t } = useI18n()
   const place = trip.places.find((p) => p.id === stop.placeId)
   const reservation = trip.logistics?.reservations?.find((r) => r.id === stop.bookedId)
@@ -109,6 +116,14 @@ export default function StopCard({ stop, point, date, id, highlighted, number }:
           {t('itinerary.maps')}
         </a>
       )}
+      {editing && (
+        <button type="button" className={styles.edit} onClick={() => setForm(true)}
+          aria-label={t('edit.editStop', { name: point.name })}>
+          <EditIcon />
+          {t('edit.edit')}
+        </button>
+      )}
+      {form && <StopForm stop={stop} name={point.name} date={date} index={index} onClose={() => setForm(false)} />}
     </article>
   )
 }

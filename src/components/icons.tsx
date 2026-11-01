@@ -234,3 +234,17 @@ export const MoonIcon = () => (
     <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
   </Icon>
 )
+
+// edit mode
+
+export const EditIcon = () => (
+  <Icon>
+    <path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4" />
+  </Icon>
+)
+
+export const DownloadIcon = () => (
+  <Icon>
+    <path d="M12 4v11M7 10l5 5 5-5M5 20h14" />
+  </Icon>
+)
