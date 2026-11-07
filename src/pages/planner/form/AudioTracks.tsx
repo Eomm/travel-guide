@@ -3,7 +3,7 @@ import { useI18n } from '../../../i18n/i18n.ts'
 import { setField } from '../../../model/edit.ts'
 import type { AudioTrack } from '../../../model/trip.gen.ts'
 import { fieldId } from './fields.ts'
-import { IssueList, NumberField, Row, TextField } from './Fields.tsx'
+import { IssueList, NumberField, Row, SelectField, TextField } from './Fields.tsx'
 import styles from './Fields.module.css'
 
 interface Props {
@@ -13,7 +13,10 @@ interface Props {
   onChange: (value: AudioTrack[] | undefined) => void
 }
 
-/** The audio guides of a place or a stop: a file in the trip folder (or a URL), with title and transcript. */
+/**
+ * The audio guides of a place or a stop: a file in the trip folder (or a URL), or a text that `npm run audio` reads
+ * with text-to-speech; with title and transcript.
+ */
 export default function AudioTracks({ path, value = [], onChange }: Props) {
   const { t } = useI18n()
   const change = (index: number, track: AudioTrack) => onChange(value.map((current, i) => (i === index ? track : current)))
@@ -34,6 +37,11 @@ export default function AudioTracks({ path, value = [], onChange }: Props) {
             <TextField path={at('title')} label={t('planner.audio.title')} required value={track.title} onChange={set('title')} />
             <TextField path={at('src')} label={t('planner.audio.src')} hint={t('planner.hint.audioSrc')} placeholder="audio/museum.mp3"
               value={track.src} onChange={set('src')} />
+            <TextField path={at('script')} label={t('planner.audio.script')} hint={t('planner.hint.audioScript')} rows={4}
+              value={track.script} onChange={set('script')} />
+            <SelectField path={at('voice')} label={t('planner.audio.voice')} empty={t('planner.audio.voiceDefault')}
+              options={[{ value: 'female', label: t('planner.audio.voiceFemale') }, { value: 'male', label: t('planner.audio.voiceMale') }]}
+              value={track.voice} onChange={set('voice')} />
             <Row>
               <TextField path={at('language')} label={t('planner.audio.language')} placeholder="it" value={track.language}
                 onChange={set('language')} />

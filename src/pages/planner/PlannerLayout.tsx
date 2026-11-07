@@ -11,6 +11,7 @@ import ThemeToggle from '../../components/ThemeToggle.tsx'
 import { loadTrip, NotFoundError } from '../../data/trips.ts'
 import { useAsync } from '../../data/useAsync.ts'
 import { useI18n } from '../../i18n/i18n.ts'
+import { withoutGeneratedAudio } from '../../model/tts.ts'
 import { deleteDraft, type Draft, loadDraft, saveDraft } from '../../planner/drafts.ts'
 import { issuesByPath, type Planner, PlannerContext, tripIssues } from '../../planner/planner.ts'
 import layoutStyles from '../TripLayout.module.css'
@@ -24,6 +25,9 @@ const tabs: Tab[] = [
   { to: 'logistics', label: 'nav.logistics', Icon: LogisticsIcon },
 ]
 
+/** The published trip without the generated audio, which would block regenerating it when its text changes. */
+const loadWrittenTrip = async (slug: string) => withoutGeneratedAudio(await loadTrip(slug))
+
 /** A draft the start page could not save (storage blocked) comes in the navigation state instead. */
 export interface PlannerLocationState {
   draft?: Draft
@@ -33,7 +37,7 @@ function Layout({ slug }: { slug: string }) {
   const { t } = useI18n()
   const navigate = useNavigate()
   const location = useLocation()
-  const published = useAsync(loadTrip, slug)
+  const published = useAsync(loadWrittenTrip, slug)
   const [{ draft, unsaved }, setState] = useState(() => {
     const saved = loadDraft(slug)
     const passed = (location.state as PlannerLocationState | null)?.draft
