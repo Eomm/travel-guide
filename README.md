@@ -34,9 +34,31 @@ The Vite plugin `scripts/vite-plugin-trips.ts` publishes the trips as static dat
 and its errors are shown in the terminal and in the browser overlay. The app reads the data at runtime through
 `src/data/trips.ts` (`loadTripIndex`, `loadTrip`), never from the JS bundle.
 
+## Planner
+
+The Planner (`/plan`, the pencil in the headers) writes a trip file in the browser, so you don't have to write
+the JSON by hand: start a new trip, import a `trip.json` / `trip.json5`, or open a published trip to update it.
+It runs the same checks as the build after every change, links each problem to its field, and **Export**
+downloads `trip.json`: put it in `trips/<slug>/` (in place of `trip.json5`, if any; JSON5 comments are lost)
+and push to publish.
+
+- **Settings**: title, dates, timezone, currency (and the rough conversion), language, cover.
+- **Days**: the itinerary, day by day. Add a day, then its stops: pick a place of the catalog or create one on
+  the spot, and say how to get from one stop to the next. Drag the stops (by the handle, a long press on touch,
+  or the keyboard) within a day, to another day, or to and from the wishlist. A day can start and end at an
+  accommodation, a place or another point.
+- **Places**: the catalog, with the wishlist (places in no day), opening hours and audio guides.
+- **Logistics**: accommodations, transports and reservations; a stop picks its reservation from its form.
+
+Drafts are autosaved in this browser's `localStorage` (`travel-guide.planner.<slug>`), one per trip: they don't
+reach other devices, and the trash button discards one. Files (images, audio) are not uploaded: the Planner
+edits their paths, the files go in the trip folder. The code is in `src/pages/planner/` (pages and forms) and
+`src/planner/` (drafts, checks, import/export); the pure trip changes are in `src/model/edit.ts`.
+
 ## UI conventions
 
-- **Routes**: `/` lists the trips; `/:slug` is `src/pages/TripLayout.tsx`, which loads the trip once (header,
+- **Routes**: `/` lists the trips; `/plan` and `/plan/:slug/<section>` are the Planner (`src/pages/planner/`,
+  `usePlanner()` from `src/planner/planner.ts`); `/:slug` is `src/pages/TripLayout.tsx`, which loads the trip once (header,
   bottom tab bar, loading/error states) and renders the pages in `src/pages/trip/` (itinerary, places, logistics,
   budget). Inside them, `useTrip()` (`src/data/trip-context.ts`) returns `{ slug, trip }`.
 - **Styles**: design tokens (colors with a dark-mode block, spacing, radius, font sizes, shadow, layout sizes)
@@ -69,12 +91,28 @@ It needs two build-time variables:
 For local development put them in `.env.local` (git-ignored, never commit it); for the deploy add them as
 repository secrets (Settings → Secrets and variables → Actions) with the same names.
 
-The key ends up in the public JavaScript bundle, so restrict it in the Google Cloud console:
+To create them, in the [Google Cloud console](https://console.cloud.google.com/):
+
+1. Create (or pick) a project and link a billing account: Google Maps Platform requires one, even within the
+   free usage.
+2. **Enable** the three APIs the site uses (APIs & Services → Library): **Maps JavaScript API** (the maps),
+   **Routes API** (the walk / drive / bike routes) and **Places API (New)** (the Planner's coordinates lookup).
+3. Create the key (APIs & Services → Credentials → Create credentials → API key) and restrict it as below.
+4. Create the map ID (Google Maps Platform → Map management → Create map ID, type JavaScript).
+
+The key ends up in the public JavaScript bundle, so restrict it:
 
 - **Application restrictions**: websites, only `http://localhost:5173/*`, `http://localhost:4173/*` and the
   GitHub Pages site (`https://<user>.github.io/*`);
-- **API restrictions**: only Maps JavaScript API and Routes API;
-- **Quotas**: set a low daily limit on both APIs (e.g. a few hundred requests a day) and a budget alert.
+- **API restrictions**: only Maps JavaScript API, Routes API and Places API (New). An API must be both enabled
+  in the project (step 2) and allowed here: otherwise Google refuses its requests as blocked;
+- **Quotas**: set a low daily limit on these APIs (e.g. a few hundred requests a day) and a budget alert.
+
+A change to the restrictions can take a few minutes to apply.
+
+The Planner uses the Places API (New) for one thing: when you paste a Google place ID in a place, it loads its
+coordinates (one request per paste). Without that API on the key, the Planner says so and the coordinates are
+typed by hand.
 
 Routes are requested once per leg and cached in `sessionStorage`, so browsing days does not repeat requests.
 Without a key (e.g. a build from a fork) there is no map at all; offline, or when the Maps script or a route

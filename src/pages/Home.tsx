@@ -1,4 +1,5 @@
 import { Link } from 'react-router'
+import { EditIcon } from '../components/icons.tsx'
 import LanguageSwitch from '../components/LanguageSwitch.tsx'
 import ThemeToggle from '../components/ThemeToggle.tsx'
 import { loadTripIndex, resolveResource } from '../data/trips.ts'
@@ -33,6 +34,9 @@ export default function Home() {
       <header className={styles.header}>
         <h1>{t('home.title')}</h1>
         <div className={styles.actions}>
+          <Link to="/plan" className={styles.action} aria-label={t('planner.title')} title={t('planner.title')}>
+            <EditIcon />
+          </Link>
           <ThemeToggle />
           <LanguageSwitch />
         </div>

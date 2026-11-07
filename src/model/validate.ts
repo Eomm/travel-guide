@@ -41,6 +41,8 @@ function message(error: ErrorObject): string {
       return `must be ${JSON.stringify(params.allowedValue)}`
     case 'enum':
       return `must be one of: ${(params.allowedValues as unknown[]).join(', ')}`
+    case 'minLength':
+      return params.limit === 1 ? 'must not be empty' : `must be at least ${params.limit} characters`
     case 'type':
       return `must be ${params.type === 'object' || params.type === 'array' ? 'an' : 'a'} ${params.type}`
     default:

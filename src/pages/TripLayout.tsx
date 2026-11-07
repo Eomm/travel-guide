@@ -3,7 +3,7 @@ import { Link, Outlet, useParams } from 'react-router'
 import { useAudio } from '../audio/audio.ts'
 import AudioProvider from '../audio/AudioProvider.tsx'
 import MiniPlayer from '../components/audio/MiniPlayer.tsx'
-import { BackIcon } from '../components/icons.tsx'
+import { BackIcon, EditIcon } from '../components/icons.tsx'
 import LanguageSwitch from '../components/LanguageSwitch.tsx'
 import TabBar from '../components/TabBar.tsx'
 import ThemeToggle from '../components/ThemeToggle.tsx'
@@ -31,6 +31,11 @@ function Layout({ slug }: { slug: string }) {
           </Link>
           <span className={styles.title}>{state.status === 'success' ? state.data.trip.title : ''}</span>
           <div className={styles.actions}>
+            {state.status === 'success' && (
+              <Link to={`/plan/${slug}`} className={styles.action} aria-label={t('planner.open')} title={t('planner.open')}>
+                <EditIcon />
+              </Link>
+            )}
             <ThemeToggle />
             <LanguageSwitch />
           </div>

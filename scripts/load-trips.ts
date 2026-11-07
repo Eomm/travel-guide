@@ -39,6 +39,8 @@ function checkFiles(trip: Trip, tripDir: string): Issue[] {
 export function loadTrip(tripDir: string): TripResult {
   const result: TripResult = { slug: tripDir.split(sep).pop()!, dir: tripDir, errors: [], warnings: [] }
   const fail = (message: string) => ({ ...result, errors: [{ path: '', message }] })
+  // `/plan` is the Planner route (src/App.tsx): a trip there could not be opened
+  if (result.slug === 'plan') return fail('"plan" is reserved for the Planner: rename the trip folder')
   const files = ['trip.json5', 'trip.json'].filter((name) => existsSync(join(tripDir, name)))
   if (files.length === 0) return fail('no trip.json5 or trip.json')
   if (files.length > 1) return fail('both trip.json5 and trip.json exist')

@@ -27,7 +27,7 @@ export function placeUses(trip: Trip): Map<string, PlaceUse[]> {
 export const normalizeText = (text: string) =>
   text.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().trim()
 
-const knownCategories = ['see', 'food', 'shop', 'fun', 'hotel', 'info']
+export const knownCategories = ['see', 'food', 'shop', 'fun', 'hotel', 'info']
 
 /** Categories are free strings: the known ones are translated, the others shown with the first letter capitalised. */
 export const categoryLabel = (category: string, t: I18n['t']) =>

@@ -1,30 +1,12 @@
-import type { ComponentType } from 'react'
 import Price from '../../../components/Price.tsx'
-import {
-  BikeIcon, BusIcon, CarIcon, FerryIcon, FlightIcon, RouteIcon, TrainIcon, WalkIcon,
-} from '../../../components/icons.tsx'
+import { modeIcons } from '../../../components/travel-icons.ts'
 import { useI18n } from '../../../i18n/i18n.ts'
 import { formatDuration } from '../../../model/format.ts'
 import { directionsUrl } from '../../../model/maps.ts'
 import type { Segment } from '../../../model/points.ts'
-import type { Travel } from '../../../model/trip.gen.ts'
 import { kmText } from './labels.ts'
 import { legDistance, useRouteDistances } from './route-distances.ts'
 import styles from './TravelLeg.module.css'
-
-const modeIcons: Record<Travel['mode'], ComponentType> = {
-  walk: WalkIcon,
-  train: TrainIcon,
-  subway: TrainIcon,
-  tram: TrainIcon,
-  bus: BusIcon,
-  ferry: FerryIcon,
-  taxi: CarIcon,
-  car: CarIcon,
-  bike: BikeIcon,
-  flight: FlightIcon,
-  other: RouteIcon,
-}
 
 /** Connector row before a stop (or the end of the day): how to get there from the previous point. */
 export default function TravelLeg({ leg }: { leg: Segment }) {
