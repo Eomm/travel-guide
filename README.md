@@ -78,10 +78,10 @@ npm run audio -- --trip hiroshima-sample --limit 3
 - The voice speaks the track's `language`, else the trip's, and is female unless the track says `voice: 'male'`
   (`scripts/tts.ts` maps the language tags to the model's voices). `OLLAMA_URL` points to another Ollama server
   (default `http://localhost:11434`).
-- Long scripts are read in chunks of up to 1000 characters, split at paragraphs and sentences (the model stops
-  after 180 s of audio per request).
-- **Cost**: a bit less than a second of generation per second of audio on an Apple Silicon Mac, about 1.8 s on a
-  GitHub runner (CPU only); ~16 characters per second of audio. The MP3 is mono, 64 kbps: ~480 KB per minute, and
+- A script longer than 4096 characters (the most one request takes, about 4 minutes of audio) is read in parts,
+  split at paragraphs, then sentences.
+- **Cost**: roughly a second of generation per second of audio on an Apple Silicon Mac (it varies with the load),
+  about 1.8 s on a GitHub runner (CPU only); ~16 characters per second of audio. The MP3 is mono, 64 kbps: ~480 KB per minute, and
   every version stays in the git history, so generate a long text once it is final.
 
 On every push to `main` the `audio` job of the deploy workflow does the same: when something is missing it starts

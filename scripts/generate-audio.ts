@@ -17,10 +17,10 @@ import { ttsModel, ttsTracks, type TtsTrack } from './tts.ts'
 const ollamaUrl = (process.env.OLLAMA_URL ?? 'http://localhost:11434').replace(/\/$/, '')
 // The model answers with raw 16-bit little-endian mono samples at 24 kHz (the same format as its WAV output).
 const sampleRate = 24000
-// One request reads at most 180 s of audio (about 2900 characters) and cuts the rest: longer scripts are read in
-// chunks of at most this many characters (about a minute each), split at paragraphs, sentences, then commas.
-const maxChars = 1000
-const maxAudioSec = 180
+// The most characters one request takes (about 4 minutes of audio; more is refused with HTTP 400): longer scripts
+// are read in chunks, split at paragraphs, sentences, then commas. Ollama counts code points, `length` UTF-16
+// units, so a chunk is never longer than it counts.
+const maxChars = 4096
 // silence between two chunks
 const pauseSec = 0.4
 // mono MP3, plenty for speech
@@ -90,9 +90,7 @@ async function speak(text: string, voice: string): Promise<Int16Array> {
   })
   if (!response.ok) throw new Error(`Ollama answered ${response.status}: ${await response.text()}`)
   const bytes = await response.arrayBuffer()
-  const samples = new Int16Array(bytes, 0, bytes.byteLength >> 1)
-  if (samples.length >= (maxAudioSec - 1) * sampleRate) throw new Error(`the audio was cut at ${maxAudioSec} s: lower maxChars`)
-  return samples
+  return new Int16Array(bytes, 0, bytes.byteLength >> 1)
 }
 
 /** Reads the script chunk by chunk and joins the samples with a short pause. */
