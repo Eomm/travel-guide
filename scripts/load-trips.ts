@@ -8,6 +8,7 @@ import { formatIssue, formatPath, type Issue } from '../src/model/issues.ts'
 import { isRelativeResource, tripResources } from '../src/model/resources.ts'
 import type { Trip } from '../src/model/trip.gen.ts'
 import { validateTrip } from '../src/model/validate.ts'
+import { ttsIssues } from './tts.ts'
 
 export interface TripResult {
   slug: string
@@ -15,7 +16,10 @@ export interface TripResult {
   dir: string
   /** Absolute path of the trip file, when there is exactly one. */
   file?: string
-  /** The parsed trip, when it is schema-valid (it may still have errors from the checks). */
+  /**
+   * The parsed trip, when it is schema-valid (it may still have errors from the checks), as written: the generated
+   * audio is added when it is published (`withGeneratedAudio` in scripts/tts.ts).
+   */
   trip?: Trip
   errors: Issue[]
   warnings: Issue[]
@@ -55,7 +59,12 @@ export function loadTrip(tripDir: string): TripResult {
   // Semantic checks assume a schema-valid trip.
   if (!validation.ok) return { ...result, errors: validation.issues }
   const { errors, warnings } = checkTrip(validation.trip)
-  return { ...result, trip: validation.trip, errors: [...errors, ...checkFiles(validation.trip, tripDir)], warnings }
+  return {
+    ...result,
+    trip: validation.trip,
+    errors: [...errors, ...checkFiles(validation.trip, tripDir)],
+    warnings: [...warnings, ...ttsIssues(validation.trip, tripDir)],
+  }
 }
 
 /** Loads every folder of `tripsDir`, sorted by slug. */

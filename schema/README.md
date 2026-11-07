@@ -27,7 +27,8 @@ Conventions:
 - Prices are plain numbers in `trip.currency`.
 - `convertCurrency: { currency: 'EUR', oneEquals: 170 }` means 1 € = 170 ¥; prices are shown as `1700 ¥ (≈ 10 €)`.
 - Unknown keys are rejected to catch typos. Use an `x-` prefix (e.g. `x-source`) for custom data.
-- Audio: `src` (file) now; `script` is reserved for build-time text-to-speech.
+- Audio: a file (`src`), or a text to read (`script`, optional `voice: 'female' | 'male'`) that `npm run audio`
+  turns into `audio/tts/<hash>.mp3` with text-to-speech (see the main README). `script` is ignored when `src` is set.
 
 ## Routes and walking distance
 

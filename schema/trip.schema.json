@@ -287,8 +287,18 @@
           "$ref": "#/$defs/text"
         },
         "script": {
-          "description": "Reserved for text-to-speech generation at build time (not implemented yet). Ignored when src is set.",
-          "type": "string"
+          "description": "Text to read with text-to-speech: `npm run audio` generates audio/tts/<hash>.mp3 and the build publishes it as src (and the script as transcript, when there is none). Ignored when src is set.",
+          "type": "string",
+          "minLength": 1
+        },
+        "voice": {
+          "description": "Text-to-speech voice for script. The language is the track language, else the trip language.",
+          "type": "string",
+          "enum": [
+            "female",
+            "male"
+          ],
+          "default": "female"
         }
       },
       "additionalProperties": false

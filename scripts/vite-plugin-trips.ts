@@ -1,7 +1,7 @@
 // Vite plugin that publishes the trips as static data under `<base>data/`:
 //   data/index.json          list of TripSummary, sorted by startDate
 //   data/<slug>/trip.json    the validated trip as plain JSON (without `$schema`)
-//   data/<slug>/<path>       every relative resource of the trip (cover, image, audio src)
+//   data/<slug>/<path>       every relative resource of the trip (cover, image, audio src, generated audio)
 // `vite build` emits these files and fails when a trip has errors; `vite dev` serves them from memory,
 // reloads on changes in the trips folder and shows the errors in the overlay (invalid trips are left out).
 import { createReadStream, readFileSync, statSync } from 'node:fs'
@@ -12,6 +12,7 @@ import type { TripSummary } from '../src/model/trip-index.ts'
 import { isRelativeResource, tripResources } from '../src/model/resources.ts'
 import type { Trip } from '../src/model/trip.gen.ts'
 import { countIssues, formatReport, loadTrips, type TripResult } from './load-trips.ts'
+import { withGeneratedAudio } from './tts.ts'
 
 /** A JSON file built in memory, or a file copied from the trip folder. */
 export type OutputFile = { source: string } | { file: string }
@@ -34,7 +35,8 @@ export function tripIndex(trips: { slug: string; trip: Trip }[]): TripSummary[] 
 export function outputFiles(results: TripResult[]): Map<string, OutputFile> {
   const valid = results.flatMap(({ slug, dir, trip, errors }) => (trip && !errors.length ? [{ slug, dir, trip }] : []))
   const files = new Map<string, OutputFile>([['index.json', { source: JSON.stringify(tripIndex(valid)) }]])
-  for (const { slug, dir, trip } of valid) {
+  for (const { slug, dir, trip: written } of valid) {
+    const trip = withGeneratedAudio(written, dir)
     // `$schema` is a path for editors, meaningless once published.
     files.set(`${slug}/trip.json`, { source: JSON.stringify({ ...trip, $schema: undefined }) })
     for (const { resource } of tripResources(trip)) {

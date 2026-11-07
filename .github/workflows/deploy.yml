@@ -10,17 +10,78 @@ permissions:
   contents: read
 
 # Pull requests: a new push cancels the older run of the same PR. Main: deploys queue up and are never cancelled,
-# also not by the run of a just-merged PR (it has no merge ref, so it would fall in the main group).
+# also not by the run of a just-merged PR (it has no merge ref, so it would fall in the main group). Pushes and
+# manual runs on main share one group, so two audio jobs never push at the same time.
 concurrency:
-  group: pages-${{ github.event_name }}-${{ github.head_ref || github.ref }}
+  group: pages-${{ github.event_name == 'pull_request' && 'pr' || 'main' }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
+env:
+  TTS_MODEL: lfm3-audio
+
 jobs:
+  # Generates the missing text-to-speech audio (npm run audio) and commits it. A push with GITHUB_TOKEN starts no
+  # other workflow, so the build below checks out that commit to deploy it.
+  audio:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    permissions:
+      contents: write
+    outputs:
+      sha: ${{ steps.commit.outputs.sha }}
+    steps:
+      # with the credentials: this job pushes
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Audio to generate
+        id: plan
+        run: npm run audio -- --dry-run
+      # Ollama only when there is something to read (the model needs Ollama >= 0.40.12)
+      - uses: actions/cache@v6
+        if: steps.plan.outputs.pending != '0'
+        with:
+          path: ~/.ollama
+          key: ollama-${{ env.TTS_MODEL }}
+      - uses: ai-action/setup-ollama@v2.1.18
+        if: steps.plan.outputs.pending != '0'
+        with:
+          version: 0.40.15
+      - name: Wait for Ollama
+        if: steps.plan.outputs.pending != '0'
+        run: |
+          for i in $(seq 60); do curl -sf http://localhost:11434/api/version && exit 0; sleep 1; done
+          echo "Ollama is not answering"; exit 1
+      - if: steps.plan.outputs.pending != '0'
+        run: ollama pull "$TTS_MODEL"
+      # also deletes the files no track uses any more, which needs no Ollama
+      - run: npm run audio
+      - name: Commit the audio
+        id: commit
+        run: |
+          git add -A trips
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'chore: generate the audio guides'
+            git pull --rebase origin "$GITHUB_REF_NAME"
+            git push origin "HEAD:$GITHUB_REF_NAME"
+          fi
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
   build:
+    needs: audio
+    # also when the audio job is skipped (pull requests) or fails: a track without audio is only a warning
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with:
+          ref: ${{ needs.audio.outputs.sha || github.sha }}
           persist-credentials: false
       - uses: actions/setup-node@v7
         with:
@@ -47,7 +108,7 @@ jobs:
           path: dist
 
   deploy:
-    if: github.event_name != 'pull_request'
+    if: ${{ !cancelled() && github.event_name != 'pull_request' && needs.build.result == 'success' }}
     needs: build
     runs-on: ubuntu-latest
     permissions:

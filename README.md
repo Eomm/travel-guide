@@ -14,6 +14,7 @@ npm run lint       # lint the sources
 npm run typecheck  # type-check only (app and scripts)
 npm run check:trips  # validate trips/*/trip.json5 (schema + checks, see schema/README.md)
 npm run gen        # regenerate the trip types and validator after a schema change
+npm run audio      # generate the text-to-speech audio guides (see Audio guides)
 ```
 
 The app is served under `/travel-guide/` by default; set `BASE_PATH` to build for a different base path.
@@ -27,7 +28,8 @@ The Vite plugin `scripts/vite-plugin-trips.ts` publishes the trips as static dat
 
 - `data/index.json`: the list of trips (slug, title, subtitle, dates, cover), sorted by start date;
 - `data/<slug>/trip.json`: the validated trip as plain JSON;
-- `data/<slug>/<path>`: every relative file the trip references, at the same relative path.
+- `data/<slug>/<path>`: every relative file the trip references, at the same relative path (generated audio
+  included, see Audio guides).
 
 `npm run build` fails when any trip has errors (same report as `npm run check:trips`); warnings are printed only.
 `npm run dev` serves the same URLs from memory and reloads on changes in `trips/`: an invalid trip is left out
@@ -54,6 +56,38 @@ Drafts are autosaved in this browser's `localStorage` (`travel-guide.planner.<sl
 reach other devices, and the trash button discards one. Files (images, audio) are not uploaded: the Planner
 edits their paths, the files go in the trip folder. The code is in `src/pages/planner/` (pages and forms) and
 `src/planner/` (drafts, checks, import/export); the pure trip changes are in `src/model/edit.ts`.
+
+## Audio guides
+
+An audio track has either a file (`src`) or a text to read (`script`, the Planner's "text to read"):
+`npm run audio` reads every `script` without `src` with text-to-speech, with the local [Ollama](https://ollama.com)
+model `lfm3-audio`, into `trips/<slug>/audio/tts/<hash>.mp3`; commit these files. The trip files are not rewritten:
+the build publishes the generated file as the track's `src`, and the script as its transcript when it has none. A
+track whose file is missing shows "Audio not available yet", and `check:trips` prints a warning.
+
+```sh
+ollama pull lfm3-audio                 # once: 2.1 GB, needs Ollama >= 0.40.12
+npm run audio                          # generate what is missing, delete the files no track uses
+npm run audio -- --dry-run             # only list what would be generated or deleted
+npm run audio -- --trip hiroshima-sample --limit 3
+```
+
+- The file name is the sha256 of model, voice and text: an unchanged track is skipped, a changed text (or voice, or
+  language) is generated again and the old file deleted. The tracks are read following the itinerary (day by day,
+  each stop and then its place, then the places in no day), so an interrupted run leaves the first days ready.
+- The voice speaks the track's `language`, else the trip's, and is female unless the track says `voice: 'male'`
+  (`scripts/tts.ts` maps the language tags to the model's voices). `OLLAMA_URL` points to another Ollama server
+  (default `http://localhost:11434`).
+- Long scripts are read in chunks of up to 1000 characters, split at paragraphs and sentences (the model stops
+  after 180 s of audio per request).
+- **Cost**: a bit less than a second of generation per second of audio on an Apple Silicon Mac, about 1.8 s on a
+  GitHub runner (CPU only); ~16 characters per second of audio. The MP3 is mono, 64 kbps: ~480 KB per minute, and
+  every version stays in the git history, so generate a long text once it is final.
+
+On every push to `main` the `audio` job of the deploy workflow does the same: when something is missing it starts
+Ollama on the runner (the model is cached), generates it, commits it as `chore: generate the audio guides` and
+deploys that commit. Runs that have nothing to generate skip Ollama. Generating locally first saves the CI time;
+the result is the same file.
 
 ## UI conventions
 
@@ -121,8 +155,9 @@ distances stay estimated (`≈`) unless set by hand in the trip.
 
 ## Deploy
 
-`.github/workflows/deploy.yml` deploys to GitHub Pages on every push to `main`; pull requests run the same
-checks (lint, generated files up to date, type check, trip checks, build) without deploying. The site is served
+`.github/workflows/deploy.yml` deploys to GitHub Pages on every push to `main`, after generating the missing
+audio guides (the `audio` job, see Audio guides); pull requests run the same checks (lint, generated files up to
+date, type check, trip checks, build) without generating or deploying. The site is served
 under `/<repo name>/`, and `404.html` is a copy of `index.html` so deep links like `/<repo>/<slug>` work on reload.
 
 One-time setup: repository Settings → Pages → Source: **GitHub Actions**.

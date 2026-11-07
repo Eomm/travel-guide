@@ -189,9 +189,13 @@ export interface AudioTrack {
   durationSec?: number
   transcript?: MarkdownText
   /**
-   * Reserved for text-to-speech generation at build time (not implemented yet). Ignored when src is set.
+   * Text to read with text-to-speech: `npm run audio` generates audio/tts/<hash>.mp3 and the build publishes it as src (and the script as transcript, when there is none). Ignored when src is set.
    */
   script?: string
+  /**
+   * Text-to-speech voice for script. The language is the track language, else the trip language.
+   */
+  voice?: 'female' | 'male'
 }
 export interface Day {
   date: LocalDate
