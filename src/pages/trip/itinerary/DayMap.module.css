@@ -31,3 +31,11 @@
   width: 16px;
   height: 16px;
 }
+
+/* the stop whose number was tapped in the list */
+.focused {
+  border-color: var(--color-accent);
+  background: var(--color-surface);
+  color: var(--color-accent);
+  transform: scale(1.25);
+}

@@ -78,6 +78,7 @@ export const ja: Messages = {
   'itinerary.showMap': '地図を表示',
   'itinerary.hideMap': '地図を隠す',
   'itinerary.mapUnavailable': '現在地図を表示できません。',
+  'itinerary.showOnMap': '立ち寄り先{number}「{name}」を地図で表示',
   'itinerary.end': '到着',
   'itinerary.endStay': '宿泊先',
   'itinerary.endNextStart': '翌日の出発地',

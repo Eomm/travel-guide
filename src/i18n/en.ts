@@ -77,6 +77,7 @@ export const en: Messages = {
   'itinerary.showMap': 'Show map',
   'itinerary.hideMap': 'Hide map',
   'itinerary.mapUnavailable': 'Map not available right now.',
+  'itinerary.showOnMap': 'Show stop {number}, {name}, on the map',
   'itinerary.end': 'Arrival',
   'itinerary.endStay': 'your accommodation',
   'itinerary.endNextStart': "next day's start",

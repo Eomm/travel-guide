@@ -1,4 +1,4 @@
-import { AdvancedMarker, Polyline, useMapsLibrary } from '@vis.gl/react-google-maps'
+import { AdvancedMarker, Polyline, useMap, useMapsLibrary } from '@vis.gl/react-google-maps'
 import { useEffect, useState } from 'react'
 import { FlagIcon, PlacesIcon } from '../../../components/icons.tsx'
 import { coords, type LatLng } from '../../../components/map/map.ts'
@@ -16,6 +16,13 @@ interface Props {
   endLeg?: EndLeg
   /** A stop marker was tapped: index of the stop in the day. */
   onSelectStop: (index: number) => void
+  /** The stop to center the map on (its number was tapped): a new object for each tap. */
+  focus?: StopFocus
+}
+
+export interface StopFocus {
+  /** Index of the stop in the day. */
+  index: number
 }
 
 const dashed: Pick<google.maps.PolylineOptions, 'strokeOpacity' | 'icons'> = {
@@ -55,9 +62,22 @@ function LegLine({ leg }: { leg: Segment }) {
   return from && to ? <Polyline path={[from, to]} {...dashed} /> : null
 }
 
+/** Centers the map on the focused stop, once per tap. */
+function CenterOn({ position, focus }: { position?: LatLng; focus?: StopFocus }) {
+  const map = useMap()
+  useEffect(() => {
+    if (!map || !position) return
+    map.panTo(position)
+    map.setZoom(Math.max(map.getZoom() ?? 0, 16))
+    // the position belongs to the focus: a tap centers the map, not a new render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [map, focus])
+  return null
+}
+
 const samePosition = (a?: LatLng, b?: LatLng) => a !== undefined && b !== undefined && a.lat === b.lat && a.lng === b.lng
 
-function MapContent({ start, legs, endLeg, onSelectStop }: Props) {
+function MapContent({ start, legs, endLeg, onSelectStop, focus }: Props) {
   const startPosition = coords(start)
   const endPosition = coords(endLeg?.to)
   const positions = [startPosition, ...legs.map((leg) => coords(leg.to)), endPosition].filter((p) => p !== undefined)
@@ -66,6 +86,7 @@ function MapContent({ start, legs, endLeg, onSelectStop }: Props) {
 
   return (
     <MapView positions={positions}>
+      <CenterOn position={focus && coords(legs[focus.index]?.to)} focus={focus} />
       {legs.map((leg, i) => (
         <LegLine key={`${leg.stop.id ?? i}:${routeRequest(leg)?.key}`} leg={leg} />
       ))}
@@ -82,7 +103,7 @@ function MapContent({ start, legs, endLeg, onSelectStop }: Props) {
         return position && (
           <AdvancedMarker key={leg.stop.id ?? i} position={position} title={`${i + 1}. ${leg.to.name}`}
             onClick={() => onSelectStop(i)}>
-            <span className={styles.marker}>{i + 1}</span>
+            <span className={focus?.index === i ? `${styles.marker} ${styles.focused}` : styles.marker}>{i + 1}</span>
           </AdvancedMarker>
         )
       })}
@@ -97,13 +118,16 @@ function MapContent({ start, legs, endLeg, onSelectStop }: Props) {
   )
 }
 
+/** Element id of the day map card, scrolled to when a stop number is tapped. */
+export const mapElementId = 'day-map'
+
 /** Map of the day: start, numbered stops and end, legs as routes or dashed lines. Renders nothing without an API key. */
 export default function DayMap(props: Props) {
   const { t } = useI18n()
   const hasPoints = [props.start, ...props.legs.map((leg) => leg.to), props.endLeg?.to].some((p) => coords(p))
   if (!hasPoints) return null
   return (
-    <MapCard titleId="day-map-title" title={t('itinerary.map')} showLabel={t('itinerary.showMap')}
+    <MapCard id={mapElementId} titleId="day-map-title" title={t('itinerary.map')} showLabel={t('itinerary.showMap')}
       hideLabel={t('itinerary.hideMap')} unavailable={t('itinerary.mapUnavailable')} storageKey="travel-guide.dayMap.hidden">
       <MapContent {...props} />
     </MapCard>

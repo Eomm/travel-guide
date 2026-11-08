@@ -5,6 +5,8 @@ import styles from './MapCard.module.css'
 import { type LatLng, mapId, mapsKey, useHiddenMap, useOnline } from './map.ts'
 
 interface CardProps {
+  /** Id of the card, e.g. to scroll to it. */
+  id?: string
   /** Id of the title, for aria-labelledby. */
   titleId: string
   title: string
@@ -27,12 +29,12 @@ function Loaded({ unavailable, children }: { unavailable: string; children: Reac
 }
 
 /** Collapsible card with an embedded map. Renders nothing without an API key. */
-export function MapCard({ titleId, title, showLabel, hideLabel, unavailable, storageKey, children }: CardProps) {
+export function MapCard({ id, titleId, title, showLabel, hideLabel, unavailable, storageKey, children }: CardProps) {
   const online = useOnline()
   const [hidden, toggle] = useHiddenMap(storageKey)
   if (!mapsKey) return null
   return (
-    <section className={styles.card} aria-labelledby={titleId}>
+    <section id={id} className={styles.card} aria-labelledby={titleId}>
       <div className={styles.header}>
         <h2 id={titleId} className={styles.title}>{title}</h2>
         <button type="button" className={styles.toggle} aria-expanded={!hidden} onClick={toggle}>

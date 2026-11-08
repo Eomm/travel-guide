@@ -45,9 +45,11 @@ interface Props {
   highlighted?: boolean
   /** Position in the day, the same number as its map marker. */
   number?: number
+  /** Centers the day map on the stop: the number becomes a button. */
+  onShowOnMap?: () => void
 }
 
-export default function StopCard({ stop, point, date, id, highlighted, number }: Props) {
+export default function StopCard({ stop, point, date, id, highlighted, number, onShowOnMap }: Props) {
   const { slug, trip } = useTrip()
   const { lang, t } = useI18n()
   const place = trip.places.find((p) => p.id === stop.placeId)
@@ -62,7 +64,12 @@ export default function StopCard({ stop, point, date, id, highlighted, number }:
     <article id={id} className={highlighted ? `${styles.card} ${styles.highlighted}` : styles.card}>
       {(number !== undefined || stop.time || reservation) && (
         <p className={styles.top}>
-          {number !== undefined && <span className={styles.number}>{number}</span>}
+          {number !== undefined && (onShowOnMap ? (
+            <button type="button" className={`${styles.number} ${styles.numberButton}`} onClick={onShowOnMap}
+              aria-label={t('itinerary.showOnMap', { number, name: point.name })}>
+              {number}
+            </button>
+          ) : <span className={styles.number}>{number}</span>)}
           {stop.time && <span className={styles.time}>{stop.time}</span>}
           {reservation && <span className={styles.badge}>{t('itinerary.booked')}</span>}
         </p>

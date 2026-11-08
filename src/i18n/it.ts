@@ -76,6 +76,7 @@ export const it = {
   'itinerary.showMap': 'Mostra mappa',
   'itinerary.hideMap': 'Nascondi mappa',
   'itinerary.mapUnavailable': 'Mappa non disponibile al momento.',
+  'itinerary.showOnMap': 'Mostra la tappa {number}, {name}, sulla mappa',
   'itinerary.end': 'Arrivo',
   'itinerary.endStay': 'il tuo alloggio',
   'itinerary.endNextStart': 'partenza del giorno dopo',

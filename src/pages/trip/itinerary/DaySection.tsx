@@ -12,7 +12,8 @@ import {
 } from '../../../model/points.ts'
 import { todayIn } from '../../../model/today.ts'
 import type { Day, Stop } from '../../../model/trip.gen.ts'
-import DayMap from './DayMap.tsx'
+import { coords, mapsKey } from '../../../components/map/map.ts'
+import DayMap, { mapElementId, type StopFocus } from './DayMap.tsx'
 import styles from './DaySection.module.css'
 import { kmText } from './labels.ts'
 import { legDistance, RouteDistancesContext, useRouteDistances } from './route-distances.ts'
@@ -141,6 +142,13 @@ export default function DaySection({ day }: { day: Day }) {
   const date = formatDate(day.date, lang, 'long')
   const routeKm = useRouteKm()
   const { highlighted, select } = useStopHighlight()
+  // the stop to center the map on, for this day only
+  const [focus, setFocus] = useState<StopFocus & { date: string }>()
+  const dayFocus = focus?.date === day.date ? focus : undefined
+  const showOnMap = (index: number) => {
+    setFocus({ date: day.date, index })
+    document.getElementById(mapElementId)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
   // the first point is the origin: the travel to reach it is not part of the route
   const segments: Segment[] = endLeg ? [...legs, endLeg] : legs
   const route = dayRouteUrl(
@@ -163,7 +171,8 @@ export default function DaySection({ day }: { day: Day }) {
             {t('itinerary.openDayInMaps')}
           </a>
         )}
-        <DayMap start={start?.point} legs={legs} endLeg={endLeg} onSelectStop={(i) => select(stopElementId(legs[i].stop, i))} />
+        <DayMap start={start?.point} legs={legs} endLeg={endLeg} onSelectStop={(i) => select(stopElementId(legs[i].stop, i))}
+          focus={dayFocus} />
         {day.notes && <p className={styles.notes}>{day.notes}</p>}
         <ol className={styles.timeline} aria-label={t('itinerary.stopsOf', { date })}>
           {start && (
@@ -175,7 +184,8 @@ export default function DaySection({ day }: { day: Day }) {
             <li key={leg.stop.id ?? i}>
               <TravelLeg leg={leg} />
               <StopCard stop={leg.stop} point={leg.to} date={day.date} id={stopElementId(leg.stop, i)} number={i + 1}
-                highlighted={highlighted === stopElementId(leg.stop, i)} />
+                highlighted={highlighted === stopElementId(leg.stop, i)}
+                onShowOnMap={mapsKey && coords(leg.to) ? () => showOnMap(i) : undefined} />
             </li>
           ))}
           {endLeg && (
